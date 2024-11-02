@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spotify_clone/common/helpers/is_dark_mode.dart';
 import 'package:spotify_clone/common/widgets/loader/custom_loader.dart';
+import 'package:spotify_clone/core/configs/constants/app_routes.dart';
+import 'package:spotify_clone/core/configs/manager/navigation_manager.dart';
 
 import '../../../../common/widgets/appbar/app_bar.dart';
 import '../../../configs/assets/app_images.dart';
@@ -31,7 +33,11 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       appBar: BasicAppbar(
         hideBack: true,
-        action: IconButton(onPressed: () {}, icon: const Icon(Icons.person)),
+        action: IconButton(
+            onPressed: () {
+              context.pushNamed(AppRoutes.profilePage);
+            },
+            icon: const Icon(Icons.person)),
         title: SvgPicture.asset(
           AppVectors.logo,
           height: 40,

@@ -1,11 +1,12 @@
 class SongModel {
   final String name;
   final String url;
-  final String coverImage;
+  final String coverImage, duration;
   final List<String> artists;
 
   SongModel({
     required this.name,
+    required this.duration,
     required this.url,
     required this.coverImage,
     this.artists = const [],
@@ -17,6 +18,7 @@ class SongModel {
       url: json['url'],
       coverImage: json['cover_image'],
       artists: List<String>.from(json['artists'] ?? []),
+      duration: json['duration'],
     );
   }
 
@@ -26,6 +28,7 @@ class SongModel {
       'url': url,
       'cover_image': coverImage,
       'artists': artists,
+      'duration': duration,
     };
   }
 }
