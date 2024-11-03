@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,8 @@ import 'package:spotify_clone/common/helpers/is_dark_mode.dart';
 import 'package:spotify_clone/common/utils/toast_utils.dart';
 import 'package:spotify_clone/common/widgets/loader/custom_loader.dart';
 import 'package:spotify_clone/core/configs/theme/app_colors.dart';
+import 'package:spotify_clone/core/modules/profile/bloc/favorite_songs_cubit.dart';
+import 'package:spotify_clone/core/modules/profile/bloc/log_out_cubit.dart';
 import 'package:spotify_clone/core/modules/profile/bloc/select_image_cubit.dart';
 import 'package:spotify_clone/core/modules/profile/bloc/upload_profile_image_cubit.dart';
 
@@ -54,12 +57,34 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: MultiBlocListener(
         listeners: [
+          BlocListener<FavoriteSongsCubit, FavoriteSongsState>(
+            listener: (context, state) {
+              if (state is RemoveFavoriteSongsSuccess) {
+                context
+                    .read<ProfileInfoCubit>()
+                    .getProfileInfo(AppState.instance.userId);
+              }
+            },
+          ),
           BlocListener<SelectImageCubit, SelectImageState>(
             listener: (context, state) {
               if (state is SelectImageFailure) {
                 ToastUtils.showFailed(message: state.error);
               } else if (state is SelectImageSuccess) {
                 isImageSelected.value = true;
+              }
+            },
+          ),
+          BlocListener<LogOutCubit, LogOutState>(
+            listener: (context, state) {
+              if (state is LogOutSuccess) {
+                CustomLoader.hideLoader(context);
+                context.pushNamedAndRemoveUntil(AppRoutes.signInPage);
+              } else if (state is LogOutFailure) {
+                CustomLoader.hideLoader(context);
+                ToastUtils.showFailed(message: state.error);
+              } else if (state is LogOutLoading) {
+                CustomLoader.showLoader(context);
               }
             },
           ),
@@ -87,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
               return Column(
                 children: [
                   SizedBox(
-                    height: MediaQuery.of(context).size.height / 3.5,
+                    height: MediaQuery.of(context).size.height / 2.8,
                     width: double.infinity,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
@@ -133,15 +158,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                         onTap: () {
                                           context
                                               .read<UploadProfileImageCubit>()
-                                              .uploadImage(
-                                                  context
-                                                      .read<SelectImageCubit>()
-                                                      .image,
-                                                  context
-                                                      .read<ProfileInfoCubit>()
-                                                      .docId);
+                                              .uploadImage(context
+                                                  .read<SelectImageCubit>()
+                                                  .image);
                                         },
                                         child: Container(
+                                          width: 150,
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 10, horizontal: 20),
                                           decoration: BoxDecoration(
@@ -196,6 +218,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           _showImagePickerOptions(context);
                                         },
                                         child: Container(
+                                          width: 150,
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 10, horizontal: 20),
                                           decoration: BoxDecoration(
@@ -228,6 +251,46 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ),
                                     ],
                                   ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              context
+                                  .read<LogOutCubit>()
+                                  .logout(AppState.instance.sessionId);
+                            },
+                            child: Container(
+                              width: 150,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.logout,
+                                    color: context.isDarkMode
+                                        ? Colors.white
+                                        : const Color(0xff2C2B2B),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Log out',
+                                    style: TextStyle(
+                                      color: context.isDarkMode
+                                          ? Colors.white
+                                          : const Color(0xff2C2B2B),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                           const SizedBox(
                             height: 15,
@@ -335,7 +398,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ],
                                     ),
                                     IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        context
+                                            .read<FavoriteSongsCubit>()
+                                            .removeSongFromFavorites(
+                                                songId: state.profileInfoModel
+                                                    .likedSong[index].id,
+                                                userId:
+                                                    AppState.instance.userId);
+                                      },
                                       icon: const Icon(
                                         Icons.favorite,
                                         color: Colors.pink,

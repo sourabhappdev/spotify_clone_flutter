@@ -10,7 +10,7 @@ part 'upload_profile_image_state.dart';
 class UploadProfileImageCubit extends Cubit<UploadProfileImageState> {
   UploadProfileImageCubit() : super(UploadProfileImageInitial());
 
-  Future<void> uploadImage(String imagePath, String docID) async {
+  Future<void> uploadImage(String imagePath) async {
     try {
       emit(UploadProfileImageLoading());
       final doc = await AppWriteService.databases.listDocuments(

@@ -1,4 +1,5 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/models.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -21,12 +22,14 @@ class SignUpCubit extends HydratedCubit<SignUpState> {
         return emit(const SignUpFailure("Fields cannot be empty"));
       }
 
-      final user = await AppWriteService.account.create(
-        userId: ID.unique(), // Generate a unique user ID
+      final User user = await AppWriteService.account.create(
+        userId: ID.unique(),
         email: email,
         password: password,
         name: name,
       );
+      final Session session = await AppWriteService.account
+          .createEmailPasswordSession(email: email, password: password);
       await AppWriteService.databases.createDocument(
           databaseId: dotenv.env['DB'] ?? '',
           collectionId: dotenv.env['USERS'] ?? '',
@@ -41,7 +44,7 @@ class SignUpCubit extends HydratedCubit<SignUpState> {
             'id': user.$id,
           });
       await StorageManager.instance.saveData('userId', user.$id);
-      await StorageManager.instance.saveData('sessionId', user.hash ?? '');
+      await StorageManager.instance.saveData('sessionId', session.$id);
       print('User registered successfully: ${user.toMap()}');
       emit(const SignUpSuccess('Account created'));
     } on AppwriteException catch (e) {

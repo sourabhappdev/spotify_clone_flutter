@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spotify_clone/core/configs/constants/app_routes.dart';
 import 'package:spotify_clone/core/modules/auth/bloc/signin/signin_cubit.dart';
 import 'package:spotify_clone/core/modules/auth/bloc/signup/sign_up_cubit.dart';
+import 'package:spotify_clone/core/modules/profile/bloc/favorite_songs_cubit.dart';
+import 'package:spotify_clone/core/modules/profile/bloc/log_out_cubit.dart';
 import 'package:spotify_clone/core/modules/profile/bloc/profile_info_cubit.dart';
 import 'package:spotify_clone/core/modules/profile/bloc/upload_profile_image_cubit.dart';
 import 'package:spotify_clone/core/modules/song_player/bloc/song_player_cubit.dart';
@@ -84,6 +86,12 @@ class NavigationManager {
             ),
             BlocProvider(
               create: (_) => UploadProfileImageCubit(),
+            ),
+            BlocProvider(
+              create: (_) => FavoriteSongsCubit(),
+            ),
+            BlocProvider(
+              create: (_) => LogOutCubit(),
             ),
           ],
           child: const ProfilePage(),
