@@ -15,6 +15,7 @@ import 'package:spotify_clone/core/modules/profile/bloc/upload_profile_image_cub
 import '../../../../common/services/app_state.dart';
 import '../../../../common/widgets/appbar/app_bar.dart';
 import '../../../configs/constants/app_routes.dart';
+import '../../choose_mode/bloc/theme_cubit.dart';
 import '../bloc/profile_info_cubit.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -36,9 +37,20 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const BasicAppbar(
+      appBar: BasicAppbar(
         backgroundColor: AppColors.primary,
-        title: Text('Profile'),
+        title: const Text('Profile'),
+        action: IconButton(
+          icon: Icon(
+            context.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+            color: context.isDarkMode ? Colors.white : const Color(0xff2C2B2B),
+          ),
+          onPressed: () {
+            context.isDarkMode
+                ? context.read<ThemeCubit>().updateTheme(ThemeMode.light)
+                : context.read<ThemeCubit>().updateTheme(ThemeMode.dark);
+          },
+        ),
       ),
       body: MultiBlocListener(
         listeners: [
@@ -137,18 +149,22 @@ class _ProfilePageState extends State<ProfilePage> {
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                           ),
-                                          child: const Row(
+                                          child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Icon(
                                                 Icons.upload,
-                                                color: Colors.white,
+                                                color: context.isDarkMode
+                                                    ? Colors.white
+                                                    : const Color(0xff2C2B2B),
                                               ),
-                                              SizedBox(width: 8),
+                                              const SizedBox(width: 8),
                                               Text(
                                                 'Upload',
                                                 style: TextStyle(
-                                                  color: Colors.white,
+                                                  color: context.isDarkMode
+                                                      ? Colors.white
+                                                      : const Color(0xff2C2B2B),
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -187,18 +203,22 @@ class _ProfilePageState extends State<ProfilePage> {
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                           ),
-                                          child: const Row(
+                                          child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Icon(
                                                 Icons.edit,
-                                                color: Colors.white,
+                                                color: context.isDarkMode
+                                                    ? Colors.white
+                                                    : const Color(0xff2C2B2B),
                                               ),
-                                              SizedBox(width: 8),
+                                              const SizedBox(width: 8),
                                               Text(
                                                 'Edit profile',
                                                 style: TextStyle(
-                                                  color: Colors.white,
+                                                  color: context.isDarkMode
+                                                      ? Colors.white
+                                                      : const Color(0xff2C2B2B),
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
