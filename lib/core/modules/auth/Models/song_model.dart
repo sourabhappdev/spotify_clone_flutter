@@ -1,11 +1,10 @@
 class SongModel {
-  final String name;
-  final String url;
-  final String coverImage, duration;
+  final String name, id, url, coverImage, duration;
   final List<String> artists;
 
   SongModel({
     required this.name,
+    required this.id,
     required this.duration,
     required this.url,
     required this.coverImage,
@@ -19,6 +18,7 @@ class SongModel {
       coverImage: json['cover_image'],
       artists: List<String>.from(json['artists'] ?? []),
       duration: json['duration'],
+      id: json['\$id'],
     );
   }
 
@@ -29,6 +29,7 @@ class SongModel {
       'cover_image': coverImage,
       'artists': artists,
       'duration': duration,
+      '\$id': duration,
     };
   }
 }
