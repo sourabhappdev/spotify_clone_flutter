@@ -74,15 +74,24 @@ class _SignupPageState extends State<SignupPage> {
               const SizedBox(
                 height: 50,
               ),
-              CommonTextField(controller: _fullName),
+              CommonTextField(
+                controller: _fullName,
+                hintText: 'Full name',
+              ),
               const SizedBox(
                 height: 20,
               ),
-              CommonTextField(controller: _email),
+              CommonTextField(
+                controller: _email,
+                hintText: 'Email',
+              ),
               const SizedBox(
                 height: 20,
               ),
-              CommonTextField(controller: _password),
+              CommonTextField(
+                controller: _password,
+                hintText: 'Password',
+              ),
               const SizedBox(
                 height: 20,
               ),
@@ -108,7 +117,7 @@ class _SignupPageState extends State<SignupPage> {
               ),
               TextButton(
                   onPressed: () {
-                    context.pushNamed(AppRoutes.signInPage);
+                    context.pushReplacementNamed(AppRoutes.signInPage);
                   },
                   child: const Text(
                     'Sign In',

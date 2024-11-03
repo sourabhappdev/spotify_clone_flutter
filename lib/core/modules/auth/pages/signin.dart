@@ -49,7 +49,6 @@ class _SignInPageState extends State<SignInPage> {
           CustomLoader.hideLoader(context);
           ToastUtils.showSuccess(message: state.message);
           context.pushNamedAndRemoveUntil(AppRoutes.homePage);
-
         } else if (state is SignInFailure) {
           CustomLoader.hideLoader(context);
           ToastUtils.showFailed(message: state.error);
@@ -76,11 +75,17 @@ class _SignInPageState extends State<SignInPage> {
               const SizedBox(
                 height: 50,
               ),
-              CommonTextField(controller: _email),
+              CommonTextField(
+                controller: _email,
+                hintText: 'Email',
+              ),
               const SizedBox(
                 height: 20,
               ),
-              CommonTextField(controller: _password),
+              CommonTextField(
+                controller: _password,
+                hintText: 'Password',
+              ),
               const SizedBox(
                 height: 20,
               ),
@@ -105,7 +110,7 @@ class _SignInPageState extends State<SignInPage> {
               ),
               TextButton(
                   onPressed: () {
-                    context.pushNamed(AppRoutes.signupPage);
+                    context.pushReplacementNamed(AppRoutes.signupPage);
                   },
                   child: const Text('Register Now',
                       style: TextStyle(color: AppColors.blueText)))
