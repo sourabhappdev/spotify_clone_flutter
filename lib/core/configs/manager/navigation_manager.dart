@@ -4,6 +4,7 @@ import 'package:spotify_clone/core/configs/constants/app_routes.dart';
 import 'package:spotify_clone/core/modules/auth/bloc/signin/signin_cubit.dart';
 import 'package:spotify_clone/core/modules/auth/bloc/signup/sign_up_cubit.dart';
 import 'package:spotify_clone/core/modules/profile/bloc/profile_info_cubit.dart';
+import 'package:spotify_clone/core/modules/profile/bloc/upload_profile_image_cubit.dart';
 import 'package:spotify_clone/core/modules/song_player/bloc/song_player_cubit.dart';
 
 import '../../modules/auth/pages/signin.dart';
@@ -13,6 +14,7 @@ import '../../modules/choose_mode/pages/choose_mode_page.dart';
 import '../../modules/home/bloc/new_songs_cubit.dart';
 import '../../modules/home/pages/home.dart';
 import '../../modules/intro/pages/get_started_page.dart';
+import '../../modules/profile/bloc/select_image_cubit.dart';
 import '../../modules/profile/pages/profile.dart';
 import '../../modules/song_player/pages/song_player.dart';
 import '../../modules/splash/pages/splash.dart';
@@ -72,8 +74,18 @@ class NavigationManager {
         // routeScreen = const DashboardPage();
         break;
       case AppRoutes.profilePage:
-        routeScreen = BlocProvider(
-          create: (_) => ProfileInfoCubit(),
+        routeScreen = MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) => ProfileInfoCubit(),
+            ),
+            BlocProvider(
+              create: (_) => SelectImageCubit(),
+            ),
+            BlocProvider(
+              create: (_) => UploadProfileImageCubit(),
+            ),
+          ],
           child: const ProfilePage(),
         );
         break;

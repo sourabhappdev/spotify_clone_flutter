@@ -8,8 +8,10 @@ import '../../../../common/services/appwrite_service.dart';
 
 part 'profile_info_state.dart';
 
-class ProfileInfoCubit extends HydratedCubit<ProfileInfoState> {
+class ProfileInfoCubit extends Cubit<ProfileInfoState> {
   ProfileInfoCubit() : super(ProfileInfoInitial());
+
+  late String docId;
 
   Future<void> getProfileInfo(String id) async {
     try {
@@ -20,6 +22,8 @@ class ProfileInfoCubit extends HydratedCubit<ProfileInfoState> {
           collectionId: dotenv.env['USERS'] ?? '',
           queries: [Query.equal('id', id)]);
 
+      docId = data.documents.first.$id;
+
       emit(ProfileInfoSuccess(
         profileInfoModel: ProfileInfoModel.fromMap(data.documents.first.data),
       ));
@@ -27,49 +31,6 @@ class ProfileInfoCubit extends HydratedCubit<ProfileInfoState> {
       emit(ProfileInfoFailure(error: e.message ?? 'An unknown error occurred'));
     } catch (e) {
       emit(const ProfileInfoFailure(error: 'Something went wrong'));
-    }
-  }
-
-  @override
-  ProfileInfoState? fromJson(Map<String, dynamic> json) {
-    try {
-      switch (json['status']) {
-        case 'ProfileInfoLoading':
-          return ProfileInfoLoading();
-        case 'ProfileInfoSuccess':
-          return ProfileInfoSuccess(
-            profileInfoModel:
-                ProfileInfoModel.fromMap(json['profileInfoModel']),
-          );
-        case 'ProfileInfoFailure':
-          return ProfileInfoFailure(error: json['error']);
-        default:
-          return ProfileInfoInitial();
-      }
-    } catch (_) {
-      return ProfileInfoInitial();
-    }
-  }
-
-  @override
-  Map<String, dynamic>? toJson(ProfileInfoState state) {
-    try {
-      if (state is ProfileInfoLoading) {
-        return {'status': 'ProfileInfoLoading'};
-      } else if (state is ProfileInfoSuccess) {
-        return {
-          'status': 'ProfileInfoSuccess',
-          'profileInfoModel': state.profileInfoModel.toMap(),
-        };
-      } else if (state is ProfileInfoFailure) {
-        return {
-          'status': 'ProfileInfoFailure',
-          'error': state.error,
-        };
-      }
-      return {'status': 'ProfileInfoInitial'};
-    } catch (_) {
-      return null;
     }
   }
 }

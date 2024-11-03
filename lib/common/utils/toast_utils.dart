@@ -15,6 +15,7 @@ class ToastUtils {
 
   static void showSuccess({required String message, int duration = 3}) {
     BotToast.showCustomNotification(
+      align: Alignment.bottomCenter,
       duration: Duration(seconds: duration),
       toastBuilder: (cancelFunc) => Padding(
         padding: const EdgeInsets.all(12),
@@ -50,6 +51,7 @@ class ToastUtils {
 
   static void showFailed({required String message, int duration = 3}) {
     BotToast.showCustomNotification(
+      align: Alignment.bottomCenter,
       duration: Duration(seconds: duration),
       toastBuilder: (cancelFunc) => Padding(
         padding: const EdgeInsets.all(12),
