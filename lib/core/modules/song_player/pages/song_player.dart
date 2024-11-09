@@ -27,6 +27,7 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
   @override
   void initState() {
     updateIsLikeVal();
+    AppState.instance.currentPlayingSongIndex.addListener(indexValListener);
     loadPlayList();
     super.initState();
   }
@@ -37,6 +38,7 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
 
   @override
   void dispose() {
+    AppState.instance.currentPlayingSongIndex.removeListener(indexValListener);
     isLikedSong.dispose();
     super.dispose();
   }
