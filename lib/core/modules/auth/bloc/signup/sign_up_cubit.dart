@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:spotify_clone/common/services/appwrite_service.dart';
+import 'package:spotify_clone/core/configs/constants/string_res.dart';
 
 import '../../../../configs/manager/storage_manager.dart';
 
@@ -33,7 +34,7 @@ class SignUpCubit extends HydratedCubit<SignUpState> {
       await AppWriteService.databases.createDocument(
           databaseId: dotenv.env['DB'] ?? '',
           collectionId: dotenv.env['USERS'] ?? '',
-          documentId: ID.unique(),
+          documentId: user.$id,
           permissions: [
             Permission.write(Role.any()),
             Permission.read(Role.any()),
@@ -43,8 +44,8 @@ class SignUpCubit extends HydratedCubit<SignUpState> {
             'email': user.email,
             'id': user.$id,
           });
-      await StorageManager.instance.saveData('userId', user.$id);
-      await StorageManager.instance.saveData('sessionId', session.$id);
+      await StorageManager.instance.saveData(StringRes.userId, user.$id);
+      await StorageManager.instance.saveData(StringRes.sessionId, session.$id);
       print('User registered successfully: ${user.toMap()}');
       emit(const SignUpSuccess('Account created'));
     } on AppwriteException catch (e) {

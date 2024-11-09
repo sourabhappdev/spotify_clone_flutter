@@ -1,4 +1,5 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/models.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -13,22 +14,20 @@ class UploadProfileImageCubit extends Cubit<UploadProfileImageState> {
   Future<void> uploadImage(String imagePath) async {
     try {
       emit(UploadProfileImageLoading());
-      final doc = await AppWriteService.databases.listDocuments(
+      final Document doc = await AppWriteService.databases.getDocument(
         databaseId: dotenv.env['DB'] ?? '',
         collectionId: dotenv.env['USERS'] ?? '',
-        queries: [Query.equal('id', AppState.instance.userId)],
+        documentId: AppState.instance.userId,
       );
 
-      if (doc.documents.isNotEmpty) {
-        final data = doc.documents.first.data;
-        final oldImageId = data['image_id'];
+      final data = doc.data;
+      final oldImageId = data['image_id'];
 
-        if (oldImageId != null && oldImageId.isNotEmpty) {
-          await AppWriteService.storage.deleteFile(
-            bucketId: dotenv.env['PROFILE'] ?? '',
-            fileId: oldImageId,
-          );
-        }
+      if (oldImageId != null && oldImageId.isNotEmpty) {
+        await AppWriteService.storage.deleteFile(
+          bucketId: dotenv.env['PROFILE'] ?? '',
+          fileId: oldImageId,
+        );
       }
 
       final result = await AppWriteService.storage.createFile(
@@ -43,7 +42,7 @@ class UploadProfileImageCubit extends Cubit<UploadProfileImageState> {
       await AppWriteService.databases.updateDocument(
         databaseId: dotenv.env['DB'] ?? '',
         collectionId: dotenv.env['USERS'] ?? '',
-        documentId: doc.documents.first.$id,
+        documentId: AppState.instance.userId,
         data: {
           'image': fileUrl,
           'image_id': result.$id,

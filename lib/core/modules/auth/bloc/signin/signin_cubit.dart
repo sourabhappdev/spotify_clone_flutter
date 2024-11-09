@@ -3,6 +3,7 @@ import 'package:appwrite/models.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:spotify_clone/common/services/app_state.dart';
 import 'package:spotify_clone/common/services/appwrite_service.dart';
+import 'package:spotify_clone/core/configs/constants/string_res.dart';
 import 'package:spotify_clone/core/configs/manager/storage_manager.dart';
 import 'package:spotify_clone/core/modules/auth/bloc/signin/signin_state.dart';
 
@@ -17,10 +18,10 @@ class SignInCubit extends HydratedCubit<SignInState> {
       }
       final Session session = await AppWriteService.account
           .createEmailPasswordSession(email: email, password: password);
-      AppState.instance.userId = session.userId;
-      AppState.instance.sessionId = session.$id;
-      await StorageManager.instance.saveData('userId', session.userId);
-      await StorageManager.instance.saveData('sessionId', session.$id);
+      AppState.instance.setUserId = session.userId;
+      AppState.instance.setSessionId = session.$id;
+      await StorageManager.instance.saveData(StringRes.userId, session.userId);
+      await StorageManager.instance.saveData(StringRes.sessionId, session.$id);
       print(session.toMap());
 
       emit(const SignInSuccess('Signed In'));

@@ -1,4 +1,4 @@
-import "package:shared_preferences/shared_preferences.dart";
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageManager {
   static final StorageManager instance = StorageManager._();
@@ -26,6 +26,22 @@ class StorageManager {
 
   Future<List<String>?> getList(String key) async =>
       _spInstance.getStringList(key);
+
+  Future<void> addToList(String key, String item) async {
+    List<String> currentList = _spInstance.getStringList(key) ?? [];
+    if (!currentList.contains(item)) {
+      currentList.add(item);
+      await _spInstance.setStringList(key, currentList);
+    }
+  }
+
+  Future<void> removeFromList(String key, String item) async {
+    List<String> currentList = _spInstance.getStringList(key) ?? [];
+    if (currentList.contains(item)) {
+      currentList.remove(item);
+      await _spInstance.setStringList(key, currentList);
+    }
+  }
 
   Future<String?> getData(String key) async => _spInstance.getString(key);
 

@@ -6,6 +6,7 @@ import 'package:spotify_clone/common/widgets/text_field/common_text_field.dart';
 import 'package:spotify_clone/core/configs/constants/app_routes.dart';
 import 'package:spotify_clone/core/modules/auth/bloc/signin/signin_cubit.dart';
 import 'package:spotify_clone/core/modules/auth/bloc/signin/signin_state.dart';
+import 'package:spotify_clone/core/modules/profile/bloc/favorite_songs_cubit.dart';
 
 import '../../../../common/utils/toast_utils.dart';
 import '../../../../common/widgets/appbar/app_bar.dart';
@@ -28,7 +29,6 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -46,6 +46,7 @@ class _SignInPageState extends State<SignInPage> {
         if (state is SignInLoading) {
           CustomLoader.showLoader(context);
         } else if (state is SignInSuccess) {
+          context.read<FavoriteSongsCubit>().setLikedSongs();
           CustomLoader.hideLoader(context);
           ToastUtils.showSuccess(message: state.message);
           context.pushNamedAndRemoveUntil(AppRoutes.homePage);

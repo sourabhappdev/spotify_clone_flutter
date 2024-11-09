@@ -11,21 +11,20 @@ part 'profile_info_state.dart';
 class ProfileInfoCubit extends Cubit<ProfileInfoState> {
   ProfileInfoCubit() : super(ProfileInfoInitial());
 
-  late String docId;
-
   Future<void> getProfileInfo(String id) async {
     try {
       emit(ProfileInfoLoading());
 
-      final data = await AppWriteService.databases.listDocuments(
-          databaseId: dotenv.env['DB'] ?? '',
-          collectionId: dotenv.env['USERS'] ?? '',
-          queries: [Query.equal('id', id)]);
+      final userDoc = await AppWriteService.databases.getDocument(
+        databaseId: dotenv.env['DB'] ?? '',
+        collectionId: dotenv.env['USERS'] ?? '',
+        documentId: id,
+      );
 
-      docId = data.documents.first.$id;
+      print(userDoc);
 
       emit(ProfileInfoSuccess(
-        profileInfoModel: ProfileInfoModel.fromMap(data.documents.first.data),
+        profileInfoModel: ProfileInfoModel.fromMap(userDoc.data),
       ));
     } on AppwriteException catch (e) {
       emit(ProfileInfoFailure(error: e.message ?? 'An unknown error occurred'));
