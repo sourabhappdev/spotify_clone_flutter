@@ -72,9 +72,6 @@ class NavigationManager {
             BlocProvider(
               create: (_) => SignUpCubit(),
             ),
-            BlocProvider(
-              create: (_) => FavoriteSongsCubit(),
-            ),
           ],
           child: const SignupPage(),
         );
@@ -126,7 +123,12 @@ class NavigationManager {
       case AppRoutes.homePage:
         routeScreen = MultiBlocProvider(
           providers: [
-            BlocProvider(create: (_) => NewSongsCubit()),
+            BlocProvider(
+              create: (_) => NewSongsCubit(),
+            ),
+            BlocProvider(
+              create: (_) => FavoriteSongsCubit(),
+            ),
           ],
           child: const HomePage(),
         );

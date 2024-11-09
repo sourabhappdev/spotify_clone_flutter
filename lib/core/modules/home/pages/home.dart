@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spotify_clone/common/helpers/is_dark_mode.dart';
 import 'package:spotify_clone/common/widgets/loader/custom_loader.dart';
@@ -8,6 +9,7 @@ import '../../../../common/widgets/appbar/app_bar.dart';
 import '../../../configs/assets/app_images.dart';
 import '../../../configs/assets/app_vectors.dart';
 import '../../../configs/theme/app_colors.dart';
+import '../../profile/bloc/favorite_songs_cubit.dart';
 import '../widgets/news_songs.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,6 +26,7 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
+    context.read<FavoriteSongsCubit>().setLikedSongs();
     _tabController = TabController(length: 3, vsync: this);
   }
 
