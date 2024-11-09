@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:spotify_clone/core/modules/auth/Models/song_model.dart';
@@ -9,15 +10,14 @@ import '../../../../common/services/app_state.dart';
 class SongPlayerCubit extends Cubit<SongPlayerState> {
   final AudioPlayer audioPlayer = AudioPlayer();
   late ConcatenatingAudioSource playlist;
-  bool skipInitialEvent = true; // Flag to skip the initial event
+  bool skipInitialEvent = true;
 
   Duration songDuration = Duration.zero;
-  Duration songPosition = Duration.zero;
+  ValueNotifier<Duration> songPosition = ValueNotifier(Duration.zero);
 
   SongPlayerCubit() : super(SongPlayerLoading()) {
     audioPlayer.positionStream.listen((position) {
-      songPosition = position;
-      updateSongPlayer();
+      songPosition.value = position;
     });
 
     audioPlayer.durationStream.listen((duration) {
@@ -29,10 +29,6 @@ class SongPlayerCubit extends Cubit<SongPlayerState> {
         AppState.instance.currentPlayingSongIndex.value = index;
       }
     });
-  }
-
-  void updateSongPlayer() {
-    emit(SongPlayerLoaded());
   }
 
   Future<void> loadPlaylist(List<SongModel> songs) async {
@@ -57,7 +53,7 @@ class SongPlayerCubit extends Cubit<SongPlayerState> {
         Duration.zero,
         index: AppState.instance.currentPlayingSongIndex.value,
       );
-      skipInitialEvent = false; // Reset after the initial load
+      skipInitialEvent = false;
       await audioPlayer.play();
       emit(SongPlayerLoaded());
     } catch (e) {
@@ -99,7 +95,8 @@ class SongPlayerCubit extends Cubit<SongPlayerState> {
   }
 
   @override
-  Future<void> close() {
+  Future<void> close() async {
+    await audioPlayer.stop();
     audioPlayer.dispose();
     return super.close();
   }
