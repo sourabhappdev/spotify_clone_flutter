@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:spotify_clone/core/configs/constants/string_res.dart';
 
 import '../../core/configs/manager/storage_manager.dart';
@@ -10,6 +11,9 @@ class AppState {
   AppState._();
 
   final Completer<void> appInitialization = Completer<void>();
+
+  //Public variable
+  final ValueNotifier<int> currentPlayingSongIndex = ValueNotifier(0);
 
   // Private variables
   String _sessionId = '';

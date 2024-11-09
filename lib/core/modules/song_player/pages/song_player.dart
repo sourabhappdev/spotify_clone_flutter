@@ -14,39 +14,30 @@ import '../bloc/song_player_state.dart';
 
 class SongPlayerPage extends StatefulWidget {
   final List<SongModel> songEntityList;
-  final int index;
 
-  const SongPlayerPage(
-      {required this.songEntityList, super.key, required this.index});
+  const SongPlayerPage({required this.songEntityList, super.key});
 
   @override
   State<SongPlayerPage> createState() => _SongPlayerPageState();
 }
 
 class _SongPlayerPageState extends State<SongPlayerPage> {
-  late final ValueNotifier<int> index;
   final ValueNotifier<bool> isLikedSong = ValueNotifier(false);
 
   @override
   void initState() {
-    index = ValueNotifier(widget.index);
-    index.addListener(indexValListener);
     updateIsLikeVal();
     loadPlayList();
     super.initState();
   }
 
   void loadPlayList() {
-    final List<String> urls =
-        widget.songEntityList.map((song) => song.url).toList();
-    context.read<SongPlayerCubit>().loadPlaylist(urls, widget.index);
+    context.read<SongPlayerCubit>().loadPlaylist(widget.songEntityList);
   }
 
   @override
   void dispose() {
-    index.removeListener(indexValListener);
     isLikedSong.dispose();
-    index.dispose();
     super.dispose();
   }
 
@@ -55,8 +46,8 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
   }
 
   void updateIsLikeVal() {
-    isLikedSong.value = AppState.instance.likedSongs
-        .contains(widget.songEntityList[index.value].id);
+    isLikedSong.value = AppState.instance.likedSongs.contains(widget
+        .songEntityList[AppState.instance.currentPlayingSongIndex.value].id);
   }
 
   @override
@@ -95,14 +86,14 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
             return Column(
               children: [
                 ValueListenableBuilder(
-                  valueListenable: index,
+                  valueListenable: AppState.instance.currentPlayingSongIndex,
                   builder: (context, value, child) => SizedBox(
                     height: MediaQuery.of(context).size.height / 2.5,
                     width: double.infinity,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(30),
                       child: CachedNetworkImage(
-                        imageUrl: widget.songEntityList[index.value].coverImage,
+                        imageUrl: widget.songEntityList[value].coverImage,
                         fit: BoxFit.cover,
                         placeholder: (context, url) =>
                             const Center(child: SpotifyLoader()),
@@ -116,9 +107,9 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
                   height: 20,
                 ),
                 ValueListenableBuilder(
-                  valueListenable: index,
+                  valueListenable: AppState.instance.currentPlayingSongIndex,
                   builder: (context, value, child) => Text(
-                    widget.songEntityList[index.value].name,
+                    widget.songEntityList[value].name,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 22),
@@ -128,9 +119,9 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
                   height: 5,
                 ),
                 ValueListenableBuilder(
-                  valueListenable: index,
+                  valueListenable: AppState.instance.currentPlayingSongIndex,
                   builder: (context, value, child) => Text(
-                    widget.songEntityList[index.value].artists.first,
+                    widget.songEntityList[value].artists.first,
                     style: const TextStyle(
                         fontWeight: FontWeight.w400, fontSize: 14),
                   ),
@@ -150,14 +141,18 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
                                   .read<FavoriteSongsCubit>()
                                   .removeSongFromFavorites(
                                       userId: AppState.instance.userId,
-                                      songId:
-                                          widget.songEntityList[index.value].id)
+                                      songId: widget
+                                          .songEntityList[AppState.instance
+                                              .currentPlayingSongIndex.value]
+                                          .id)
                               : context
                                   .read<FavoriteSongsCubit>()
                                   .addSongToFavorites(
                                       userId: AppState.instance.userId,
                                       songId: widget
-                                          .songEntityList[index.value].id);
+                                          .songEntityList[AppState.instance
+                                              .currentPlayingSongIndex.value]
+                                          .id);
                         },
                         child: Icon(isLikedVal
                             ? Icons.thumb_up_alt
@@ -219,9 +214,9 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  if (index.value != 0) {
-                                    index.value--;
-                                  }
+                                  context
+                                      .read<SongPlayerCubit>()
+                                      .previousSong();
                                 },
                                 child: const SizedBox(
                                   height: 60,
@@ -260,10 +255,10 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
                               const SizedBox(width: 50),
                               GestureDetector(
                                 onTap: () {
-                                  if (index.value !=
+                                  if (AppState.instance.currentPlayingSongIndex
+                                          .value !=
                                       widget.songEntityList.length - 1) {
                                     context.read<SongPlayerCubit>().nextSong();
-                                    index.value++;
                                   }
                                 },
                                 child: const SizedBox(

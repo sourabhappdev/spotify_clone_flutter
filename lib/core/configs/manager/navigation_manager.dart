@@ -113,7 +113,6 @@ class NavigationManager {
           ],
           child: SongPlayerPage(
             songEntityList: args!['songEntity'],
-            index: args['index'],
           ),
         );
         break;

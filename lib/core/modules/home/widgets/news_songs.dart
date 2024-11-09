@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spotify_clone/common/helpers/is_dark_mode.dart';
+import 'package:spotify_clone/common/services/app_state.dart';
 import 'package:spotify_clone/common/widgets/loader/custom_loader.dart';
 import 'package:spotify_clone/core/configs/constants/app_routes.dart';
 import 'package:spotify_clone/core/modules/home/bloc/new_songs_state.dart';
@@ -39,11 +40,11 @@ class _NewsSongsState extends State<NewsSongs> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
+                        AppState.instance.currentPlayingSongIndex.value = index;
                         context.pushNamed(
                           AppRoutes.songPlayerPage,
                           args: {
                             'songEntity': state.songs,
-                            'index': index,
                           },
                         );
                       },
