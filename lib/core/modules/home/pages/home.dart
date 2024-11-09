@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spotify_clone/common/helpers/is_dark_mode.dart';
 import 'package:spotify_clone/common/widgets/loader/custom_loader.dart';
 import 'package:spotify_clone/core/configs/constants/app_routes.dart';
-import 'package:spotify_clone/core/configs/manager/navigation_manager.dart';
 
 import '../../../../common/widgets/appbar/app_bar.dart';
 import '../../../configs/assets/app_images.dart';

@@ -63,6 +63,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 context
                     .read<ProfileInfoCubit>()
                     .getProfileInfo(AppState.instance.userId);
+              } else if (state is RemoveFavoriteSongsFailure) {
+                ToastUtils.showFailed(message: state.error);
               }
             },
           ),
@@ -201,15 +203,26 @@ class _ProfilePageState extends State<ProfilePage> {
                                       SizedBox(
                                         height: 90,
                                         width: 90,
-                                        child: DecoratedBox(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            image: DecorationImage(
-                                              image: CachedNetworkImageProvider(
-                                                  state.profileInfoModel.image),
-                                              fit: BoxFit.cover,
+                                        child: CachedNetworkImage(
+                                          imageUrl:
+                                              state.profileInfoModel.image,
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  DecoratedBox(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                           ),
+                                          placeholder: (context, url) =>
+                                              const CircularProgressIndicator(
+                                            color: AppColors.primary,
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.error),
                                         ),
                                       ),
                                       const SizedBox(height: 10),
@@ -317,11 +330,17 @@ class _ProfilePageState extends State<ProfilePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'FAVORITE SONGS',
+                          'Favorite songs',
                         ),
                         const SizedBox(
                           height: 20,
                         ),
+                        if (state.profileInfoModel.likedSong.isEmpty)
+                          const Center(
+                            child: Text(
+                              'No liked songs',
+                            ),
+                          ),
                         ListView.separated(
                             shrinkWrap: true,
                             itemBuilder: (context, index) {

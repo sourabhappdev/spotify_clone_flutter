@@ -67,8 +67,15 @@ class NavigationManager {
         );
         break;
       case AppRoutes.signupPage:
-        routeScreen = BlocProvider(
-          create: (_) => SignUpCubit(),
+        routeScreen = MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) => SignUpCubit(),
+            ),
+            BlocProvider(
+              create: (_) => FavoriteSongsCubit(),
+            ),
+          ],
           child: const SignupPage(),
         );
         break;
@@ -98,8 +105,15 @@ class NavigationManager {
         );
         break;
       case AppRoutes.songPlayerPage:
-        routeScreen = BlocProvider(
-          create: (context) => SongPlayerCubit(),
+        routeScreen = MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => SongPlayerCubit(),
+            ),
+            BlocProvider(
+              create: (context) => FavoriteSongsCubit(),
+            ),
+          ],
           child: SongPlayerPage(
             songEntityList: args!['songEntity'],
             index: args['index'],

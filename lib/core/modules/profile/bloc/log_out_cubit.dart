@@ -12,7 +12,7 @@ class LogOutCubit extends Cubit<LogOutState> {
   void logout(String sessionId) async {
     try {
       emit(LogOutLoading());
-      final res = AppWriteService.account.deleteSession(sessionId: sessionId);
+      AppWriteService.account.deleteSession(sessionId: sessionId);
       await AppState.instance.clearAllValues();
       emit(LogOutSuccess());
     } on AppwriteException catch (e) {
