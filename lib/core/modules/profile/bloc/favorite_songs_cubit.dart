@@ -50,8 +50,6 @@ class FavoriteSongsCubit extends Cubit<FavoriteSongsState> {
       await StorageManager.instance
           .removeFromList(StringRes.likedSongs, songId);
 
-      print(AppState.instance.likedSongs);
-
       await AppWriteService.databases.updateDocument(
         databaseId: dotenv.env['DB'] ?? '',
         collectionId: dotenv.env['USERS'] ?? '',

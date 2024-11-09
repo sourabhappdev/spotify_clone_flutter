@@ -1,7 +1,7 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
+import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:spotify_clone/common/services/app_state.dart';
 import 'package:spotify_clone/common/services/appwrite_service.dart';

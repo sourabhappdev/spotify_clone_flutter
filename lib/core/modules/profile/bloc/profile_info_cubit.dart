@@ -1,7 +1,7 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:spotify_clone/core/modules/profile/models/profile_info_model.dart';
 
 import '../../../../common/services/appwrite_service.dart';
@@ -20,8 +20,6 @@ class ProfileInfoCubit extends Cubit<ProfileInfoState> {
         collectionId: dotenv.env['USERS'] ?? '',
         documentId: id,
       );
-
-      print(userDoc);
 
       emit(ProfileInfoSuccess(
         profileInfoModel: ProfileInfoModel.fromMap(userDoc.data),

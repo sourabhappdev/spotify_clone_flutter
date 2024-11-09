@@ -33,11 +33,8 @@ dependencies:
   flutter_svg:
   flutter_bloc:
   hydrated_bloc:
-  path_provider:
-  get_it:
+  bloc:
   just_audio:
-  dartz:
-  cloud_firestore:
   equatable:
   lottie:
   bot_toast:

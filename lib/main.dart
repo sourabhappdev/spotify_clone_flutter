@@ -1,8 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:spotify_clone/common/services/appwrite_service.dart';
 import 'package:spotify_clone/core/configs/constants/app_routes.dart';
 import 'package:spotify_clone/core/configs/manager/navigation_manager.dart';
@@ -17,9 +15,6 @@ Future<void> main() async {
 
   await dotenv.load(fileName: ".env");
   AppWriteService.instance.init();
-  HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: await getApplicationDocumentsDirectory(),
-  );
   Bloc.observer = AppBlocObserver();
   runApp(const MyApp());
 }

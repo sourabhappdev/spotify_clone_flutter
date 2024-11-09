@@ -1,8 +1,8 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
+import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:spotify_clone/common/services/appwrite_service.dart';
 import 'package:spotify_clone/core/configs/constants/string_res.dart';
 
@@ -10,7 +10,7 @@ import '../../../../configs/manager/storage_manager.dart';
 
 part 'sign_up_state.dart';
 
-class SignUpCubit extends HydratedCubit<SignUpState> {
+class SignUpCubit extends Cubit<SignUpState> {
   SignUpCubit() : super(SignUpInitial());
 
   void createAccount(
@@ -46,49 +46,11 @@ class SignUpCubit extends HydratedCubit<SignUpState> {
           });
       await StorageManager.instance.saveData(StringRes.userId, user.$id);
       await StorageManager.instance.saveData(StringRes.sessionId, session.$id);
-      print('User registered successfully: ${user.toMap()}');
       emit(const SignUpSuccess('Account created'));
     } on AppwriteException catch (e) {
       emit(SignUpFailure(e.toString()));
     } catch (e) {
       emit(const SignUpFailure('Something went wrong'));
     }
-  }
-
-  @override
-  SignUpState? fromJson(Map<String, dynamic> json) {
-    final state = json['state'] as String?;
-
-    switch (state) {
-      case 'SignUpInitial':
-        return SignUpInitial();
-      case 'SignUpLoading':
-        return SignUpLoading();
-      case 'SignUpSuccess':
-        return const SignUpSuccess('Account created');
-      case 'SignUpFailure':
-        final error = json['error'] as String?;
-        return SignUpFailure(error ?? 'Unknown error');
-      default:
-        return SignUpInitial();
-    }
-  }
-
-  @override
-  Map<String, dynamic>? toJson(SignUpState state) {
-    // Serialize the state to JSON
-    if (state is SignUpInitial) {
-      return {'state': 'SignUpInitial'};
-    } else if (state is SignUpLoading) {
-      return {'state': 'SignUpLoading'};
-    } else if (state is SignUpSuccess) {
-      return {'state': 'SignUpSuccess'};
-    } else if (state is SignUpFailure) {
-      return {
-        'state': 'SignUpFailure',
-        'error': state.error,
-      };
-    }
-    return null;
   }
 }

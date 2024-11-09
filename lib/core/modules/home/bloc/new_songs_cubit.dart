@@ -1,12 +1,12 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:bloc/bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:spotify_clone/core/modules/auth/Models/song_model.dart';
 
 import '../../../../common/services/appwrite_service.dart';
 import 'new_songs_state.dart';
 
-class NewSongsCubit extends HydratedCubit<NewSongsState> {
+class NewSongsCubit extends Cubit<NewSongsState> {
   NewSongsCubit() : super(NewSongsInitial());
 
   void getNewsSongs() async {
@@ -19,7 +19,6 @@ class NewSongsCubit extends HydratedCubit<NewSongsState> {
       final List<SongModel> songs = response.documents
           .map((doc) => SongModel.fromJson(doc.data))
           .toList();
-      print(songs);
 
       emit(NewSongsSuccess(songs));
     } on AppwriteException catch (e) {
@@ -27,41 +26,5 @@ class NewSongsCubit extends HydratedCubit<NewSongsState> {
     } catch (e) {
       emit(const NewSongsFailure('Something went wrong'));
     }
-  }
-
-  @override
-  NewSongsState? fromJson(Map<String, dynamic> json) {
-    final state = json['state'] as String?;
-
-    switch (state) {
-      case 'NewSongsInitial':
-        return NewSongsInitial();
-      case 'NewSongsLoading':
-        return NewSongsLoading();
-      case 'NewSongsSuccess':
-        return NewSongsSuccess(json['songs']);
-      case 'NewSongsFailure':
-        final error = json['error'] as String?;
-        return NewSongsFailure(error ?? 'Unknown error');
-      default:
-        return NewSongsInitial();
-    }
-  }
-
-  @override
-  Map<String, dynamic>? toJson(NewSongsState state) {
-    if (state is NewSongsInitial) {
-      return {'state': 'NewSongsInitial'};
-    } else if (state is NewSongsLoading) {
-      return {'state': 'NewSongsLoading'};
-    } else if (state is NewSongsSuccess) {
-      return {'state': 'NewSongsSuccess', 'songs': state.songs};
-    } else if (state is NewSongsFailure) {
-      return {
-        'state': 'NewSongsFailure',
-        'error': state.error,
-      };
-    }
-    return null;
   }
 }
