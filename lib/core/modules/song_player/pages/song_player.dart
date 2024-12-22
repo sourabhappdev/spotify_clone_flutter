@@ -88,8 +88,12 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
               'Now playing',
               style: TextStyle(fontSize: 18),
             ),
-            action: IconButton(
-                onPressed: () {}, icon: const Icon(Icons.more_vert_rounded)),
+            actions: [
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.more_vert_rounded),
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             physics: const NeverScrollableScrollPhysics(),
@@ -184,40 +188,36 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
                       if (state is SongPlayerLoaded) {
                         return Column(
                           children: [
-                            ValueListenableBuilder(
-                              valueListenable:
-                                  context.read<SongPlayerCubit>().songPosition,
-                              builder: (context, songPosition, child) => Slider(
-                                  activeColor: AppColors.primary,
-                                  inactiveColor: AppColors.grey,
-                                  thumbColor: AppColors.primary,
-                                  value: songPosition.inSeconds.toDouble(),
-                                  min: 0.0,
-                                  max: context
+                            Slider(
+                                activeColor: AppColors.primary,
+                                inactiveColor: AppColors.lightBackground,
+                                thumbColor: AppColors.primary,
+                                value: context
+                                    .read<SongPlayerCubit>()
+                                    .songPosition
+                                    .inSeconds
+                                    .toDouble(),
+                                min: 0.0,
+                                max: context
+                                    .read<SongPlayerCubit>()
+                                    .songDuration
+                                    .inSeconds
+                                    .toDouble(),
+                                onChanged: (value) {
+                                  int seekPosition = value.toInt();
+                                  context
                                       .read<SongPlayerCubit>()
-                                      .songDuration
-                                      .inSeconds
-                                      .toDouble(),
-                                  onChanged: (value) {
-                                    int seekPosition = value.toInt();
-                                    context
-                                        .read<SongPlayerCubit>()
-                                        .seekTo(seekPosition);
-                                  }),
-                            ),
+                                      .seekTo(seekPosition);
+                                }),
                             const SizedBox(
                               height: 20,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                ValueListenableBuilder(
-                                  valueListenable: context
-                                      .read<SongPlayerCubit>()
-                                      .songPosition,
-                                  builder: (context, songPosition, child) =>
-                                      Text(formatDuration(songPosition)),
-                                ),
+                                Text(formatDuration(context
+                                    .read<SongPlayerCubit>()
+                                    .songPosition)),
                                 Text(formatDuration(context
                                     .read<SongPlayerCubit>()
                                     .songDuration))

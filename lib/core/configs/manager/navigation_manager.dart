@@ -8,6 +8,8 @@ import 'package:spotify_clone/core/modules/profile/bloc/log_out_cubit.dart';
 import 'package:spotify_clone/core/modules/profile/bloc/profile_info_cubit.dart';
 import 'package:spotify_clone/core/modules/profile/bloc/upload_profile_image_cubit.dart';
 import 'package:spotify_clone/core/modules/song_player/bloc/song_player_cubit.dart';
+import 'package:spotify_clone/core/modules/upload_song/blocs/upload_song_cubit.dart';
+import 'package:spotify_clone/core/modules/upload_song/page/upload_song.dart';
 
 import '../../modules/auth/pages/signin.dart';
 import '../../modules/auth/pages/signup.dart';
@@ -60,6 +62,11 @@ class NavigationManager {
       case AppRoutes.getStartedPage:
         routeScreen = const GetStartedPage();
         break;
+      case AppRoutes.uploadSongs:
+        routeScreen = BlocProvider(
+          create: (_) => UploadSongCubit(),
+          child: const UploadSongPage(),
+        );
       case AppRoutes.signInPage:
         routeScreen = BlocProvider(
           create: (_) => SignInCubit(),

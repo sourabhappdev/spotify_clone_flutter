@@ -17,5 +17,6 @@ class AppRoutes {
       songPlayerPage = "songPlayerPage",
       chooseModePage = "chooseModePage",
       chooseSignInSignUpPage = "chooseSignInSignUpPage",
+      uploadSongs = "uploadSongs",
       homePage = "homePage";
 }

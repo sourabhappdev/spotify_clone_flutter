@@ -10,6 +10,7 @@ import '../../../configs/assets/app_images.dart';
 import '../../../configs/assets/app_vectors.dart';
 import '../../../configs/theme/app_colors.dart';
 import '../../profile/bloc/favorite_songs_cubit.dart';
+import '../bloc/new_songs_cubit.dart';
 import '../widgets/news_songs.dart';
 
 class HomePage extends StatefulWidget {
@@ -35,11 +36,21 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       appBar: BasicAppbar(
         hideBack: true,
-        action: IconButton(
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await context.pushNamed(AppRoutes.uploadSongs);
+              if (context.mounted) context.read<NewSongsCubit>().getNewsSongs();
+            },
+            icon: const Icon(Icons.upload),
+          ),
+          IconButton(
             onPressed: () {
               context.pushNamed(AppRoutes.profilePage);
             },
-            icon: const Icon(Icons.person)),
+            icon: const Icon(Icons.person),
+          ),
+        ],
         title: SvgPicture.asset(
           AppVectors.logo,
           height: 40,

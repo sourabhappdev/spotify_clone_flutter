@@ -40,6 +40,7 @@ dependencies:
   bot_toast:
   shared_preferences:
   cached_network_image:
+  file_picker:
 
 
   # The following adds the Cupertino Icons font to your application.
