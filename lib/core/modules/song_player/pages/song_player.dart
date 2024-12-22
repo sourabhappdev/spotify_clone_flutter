@@ -190,7 +190,7 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
                           children: [
                             Slider(
                                 activeColor: AppColors.primary,
-                                inactiveColor: AppColors.lightBackground,
+                                inactiveColor: AppColors.grey,
                                 thumbColor: AppColors.primary,
                                 value: context
                                     .read<SongPlayerCubit>()
