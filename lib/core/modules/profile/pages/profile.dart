@@ -470,22 +470,28 @@ extension _HelperMehtod on _ProfilePageState {
       builder: (_) {
         return Container(
           padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          decoration: BoxDecoration(
+            color: context.isDarkMode
+                ? AppColors.darkBackground
+                : AppColors.lightBackground,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
           ),
           child: Wrap(
             runSpacing: 10, // Space between ListTiles
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: context.isDarkMode
+                      ? AppColors.primary
+                      : AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                  leading:
-                      const Icon(Icons.photo_library, color: AppColors.primary),
+                  leading: Icon(Icons.photo_library,
+                      color: context.isDarkMode
+                          ? AppColors.lightBackground
+                          : AppColors.primary),
                   title: const Text(
                     'Pick from Gallery',
                     style: TextStyle(
@@ -503,13 +509,17 @@ extension _HelperMehtod on _ProfilePageState {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: context.isDarkMode
+                      ? AppColors.primary
+                      : AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                  leading:
-                      const Icon(Icons.camera_alt, color: AppColors.primary),
+                  leading: Icon(Icons.camera_alt,
+                      color: context.isDarkMode
+                          ? AppColors.lightBackground
+                          : AppColors.primary),
                   title: const Text(
                     'Take a Photo',
                     style: TextStyle(
