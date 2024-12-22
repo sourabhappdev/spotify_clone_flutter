@@ -13,11 +13,12 @@ class SongPlayerCubit extends Cubit<SongPlayerState> {
   bool skipInitialEvent = true;
 
   Duration songDuration = Duration.zero;
-  ValueNotifier<Duration> songPosition = ValueNotifier(Duration.zero);
+  Duration songPosition = Duration.zero;
 
   SongPlayerCubit() : super(SongPlayerLoading()) {
     audioPlayer.positionStream.listen((position) {
-      songPosition.value = position;
+      songPosition = position;
+      emit(SongPlayerLoaded());
     });
 
     audioPlayer.durationStream.listen((duration) {
