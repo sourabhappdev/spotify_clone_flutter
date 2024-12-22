@@ -42,17 +42,20 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: BasicAppbar(
         backgroundColor: AppColors.primary,
         title: const Text('Profile'),
-        action: IconButton(
-          icon: Icon(
-            context.isDarkMode ? Icons.light_mode : Icons.dark_mode,
-            color: context.isDarkMode ? Colors.white : const Color(0xff2C2B2B),
+        actions: [
+          IconButton(
+            icon: Icon(
+              context.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+              color:
+                  context.isDarkMode ? Colors.white : const Color(0xff2C2B2B),
+            ),
+            onPressed: () {
+              context.isDarkMode
+                  ? context.read<ThemeCubit>().updateTheme(ThemeMode.light)
+                  : context.read<ThemeCubit>().updateTheme(ThemeMode.dark);
+            },
           ),
-          onPressed: () {
-            context.isDarkMode
-                ? context.read<ThemeCubit>().updateTheme(ThemeMode.light)
-                : context.read<ThemeCubit>().updateTheme(ThemeMode.dark);
-          },
-        ),
+        ],
       ),
       body: MultiBlocListener(
         listeners: [
@@ -363,18 +366,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                         SizedBox(
                                           height: 70,
                                           width: 70,
-                                          child: DecoratedBox(
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                image: DecorationImage(
-                                                  image:
-                                                      CachedNetworkImageProvider(
-                                                          state
-                                                              .profileInfoModel
-                                                              .likedSong[index]
-                                                              .coverImage),
-                                                )),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            child: CachedNetworkImage(
+                                              imageUrl: state.profileInfoModel
+                                                  .likedSong[index].coverImage,
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) =>
+                                                  const CircularProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Icon(Icons.error),
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(
