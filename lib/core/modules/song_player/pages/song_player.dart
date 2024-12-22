@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spotify_clone/common/helpers/is_dark_mode.dart';
 import 'package:spotify_clone/common/services/app_state.dart';
 import 'package:spotify_clone/common/utils/toast_utils.dart';
 import 'package:spotify_clone/common/widgets/loader/custom_loader.dart';
@@ -89,9 +90,62 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
               style: TextStyle(fontSize: 18),
             ),
             actions: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.more_vert_rounded),
+              ValueListenableBuilder(
+                valueListenable: isLikedSong,
+                builder: (context, isLikedVal, child) => IconButton(
+                  onPressed: () {
+                    showMenu(
+                      color: context.isDarkMode
+                          ? AppColors.darkBackground
+                          : AppColors.lightBackground,
+                      context: context,
+                      position: const RelativeRect.fromLTRB(100, 80, 0, 0),
+                      items: [
+                        PopupMenuItem(
+                          value: 'like',
+                          onTap: () {
+                            isLikedVal
+                                ? context
+                                    .read<FavoriteSongsCubit>()
+                                    .removeSongFromFavorites(
+                                        userId: AppState.instance.userId,
+                                        songId: widget
+                                            .songEntityList[AppState.instance
+                                                .currentPlayingSongIndex.value]
+                                            .id)
+                                : context
+                                    .read<FavoriteSongsCubit>()
+                                    .addSongToFavorites(
+                                        userId: AppState.instance.userId,
+                                        songId: widget
+                                            .songEntityList[AppState.instance
+                                                .currentPlayingSongIndex.value]
+                                            .id);
+                          },
+                          child: ListTile(
+                            leading: Icon(isLikedVal
+                                ? Icons.thumb_up_alt
+                                : Icons.thumb_up_alt_outlined),
+                            title: Text(isLikedVal
+                                ? 'Remove from liked songs'
+                                : 'Add to liked songs'),
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'exit',
+                          onTap: () {
+                            context.pop();
+                          },
+                          child: ListTile(
+                            leading: Icon(Icons.exit_to_app),
+                            title: Text('Exit'),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                  icon: const Icon(Icons.more_vert_rounded),
+                ),
               ),
             ],
           ),
