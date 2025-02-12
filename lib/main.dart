@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -13,21 +15,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/modules/choose_mode/bloc/theme_cubit.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  await dotenv.load(fileName: ".env");
-  AppWriteService.instance.init();
-  HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: await getApplicationDocumentsDirectory(),
-  );
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-    androidNotificationChannelName: 'Audio playback',
-    androidNotificationOngoing: true,
-  );
-  Bloc.observer = AppBlocObserver();
-  runApp(const MyApp());
+void main() async {
+  runZonedGuarded<void>(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await dotenv.load(fileName: ".env");
+    AppWriteService.instance.init();
+    HydratedBloc.storage = await HydratedStorage.build(
+      storageDirectory: await getApplicationDocumentsDirectory(),
+    );
+    await JustAudioBackground.init(
+        androidNotificationChannelId: 'com.sourabh.spotify.clone.app',
+        androidNotificationChannelName: 'Audio playback',
+        androidNotificationOngoing: true,
+        preloadArtwork: true);
+    Bloc.observer = AppBlocObserver();
+    runApp(const MyApp());
+  }, (error, stack) {
+    debugPrint("error found in main=> ${error.toString()}");
+  });
 }
 
 class MyApp extends StatelessWidget {
