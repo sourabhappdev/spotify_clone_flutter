@@ -10,15 +10,16 @@ import '../../../../common/services/app_state.dart';
 class SongPlayerCubit extends Cubit<SongPlayerState> {
   final AudioPlayer audioPlayer = AudioPlayer();
   late ConcatenatingAudioSource playlist;
-  bool skipInitialEvent = true;
+  bool skipInitialEvent = true, emitOnce = true;
 
   Duration songDuration = Duration.zero;
-  Duration songPosition = Duration.zero;
+  ValueNotifier<Duration> songPosition = ValueNotifier(Duration.zero);
 
   SongPlayerCubit() : super(SongPlayerLoading()) {
     audioPlayer.positionStream.listen((position) {
-      songPosition = position;
-      emit(SongPlayerLoaded());
+      songPosition.value = position;
+      if (emitOnce) emit(SongPlayerLoaded());
+      emitOnce = false;
     });
 
     audioPlayer.durationStream.listen((duration) {
