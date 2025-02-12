@@ -18,7 +18,7 @@ class ToastUtils {
       align: Alignment.bottomCenter,
       duration: Duration(seconds: duration),
       toastBuilder: (cancelFunc) => Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         child: Card(
           elevation: 15,
           color: AppColors.primary,
@@ -27,7 +27,7 @@ class ToastUtils {
           ),
           child: ListTile(
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
             title: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -63,7 +63,7 @@ class ToastUtils {
           ),
           child: ListTile(
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
             title: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
