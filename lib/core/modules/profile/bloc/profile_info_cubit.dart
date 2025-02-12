@@ -20,9 +20,11 @@ class ProfileInfoCubit extends Cubit<ProfileInfoState> {
         collectionId: dotenv.env['USERS'] ?? '',
         documentId: id,
       );
+      final ProfileInfoModel profileInfoModel =
+          ProfileInfoModel.fromMap(userDoc.data);
 
       emit(ProfileInfoSuccess(
-        profileInfoModel: ProfileInfoModel.fromMap(userDoc.data),
+        profileInfoModel: profileInfoModel,
       ));
     } on AppwriteException catch (e) {
       emit(ProfileInfoFailure(error: e.message ?? 'An unknown error occurred'));
