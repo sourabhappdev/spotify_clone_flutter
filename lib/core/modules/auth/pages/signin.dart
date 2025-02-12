@@ -84,6 +84,7 @@ class _SignInPageState extends State<SignInPage> {
               CommonTextField(
                 controller: _password,
                 hintText: 'Password',
+                isPassword: true,
               ),
               const SizedBox(
                 height: 20,

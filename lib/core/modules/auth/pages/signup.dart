@@ -24,6 +24,7 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _fullName = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
+  final ValueNotifier<bool> isObscure = ValueNotifier(true);
 
   @override
   void initState() {
@@ -91,6 +92,7 @@ class _SignupPageState extends State<SignupPage> {
               CommonTextField(
                 controller: _password,
                 hintText: 'Password',
+                isPassword: true,
               ),
               const SizedBox(
                 height: 20,
