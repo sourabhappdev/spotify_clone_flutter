@@ -54,6 +54,22 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+
+
+    flavorDimensions "flavor-type"
+
+// TODO: Add your own app name for the builds.
+    productFlavors {
+        dev {
+            dimension "flavor-type"
+            applicationIdSuffix ".dev"
+            resValue "string", "app_name", "Spotify Clone Dev"
+        }
+        prod {
+            dimension "flavor-type"
+            resValue "string", "app_name", "Spotify Clone"
+        }
+    }
 }
 
 flutter {

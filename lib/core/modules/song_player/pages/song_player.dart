@@ -60,7 +60,7 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) async {
+      onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         await context.read<SongPlayerCubit>().audioPlayer.stop();
         if (context.mounted) context.pop();

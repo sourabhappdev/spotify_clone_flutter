@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:bot_toast/bot_toast.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -14,10 +16,18 @@ import 'package:spotify_clone/core/configs/theme/app_theme.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/modules/choose_mode/bloc/theme_cubit.dart';
+import 'firebase_options.dart';
 
-void main() async {
+void main() {
+  mainDelegate();
+}
+
+void mainDelegate() async {
   runZonedGuarded<void>(() async {
     WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
     await dotenv.load(fileName: ".env");
     AppWriteService.instance.init();
     HydratedBloc.storage = await HydratedStorage.build(
@@ -29,9 +39,11 @@ void main() async {
         androidNotificationOngoing: true,
         preloadArtwork: true);
     Bloc.observer = AppBlocObserver();
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
     runApp(const MyApp());
   }, (error, stack) {
     debugPrint("error found in main=> ${error.toString()}");
+    FirebaseCrashlytics.instance.recordError(error, stack);
   });
 }
 

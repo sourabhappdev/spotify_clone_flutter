@@ -10,7 +10,7 @@
 
 
     <application
-        android:label="spotify_clone"
+        android:label="@string/app_name"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

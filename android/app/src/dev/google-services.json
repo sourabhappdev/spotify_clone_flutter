@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:323330246165:android:6384b42fd1fb930f3bb01c",
         "android_client_info": {
-          "package_name": "com.sourabh.spotify.clone.app"
+          "package_name": "com.sourabh.spotify.clone.app.dev"
         }
       },
       "oauth_client": [],
