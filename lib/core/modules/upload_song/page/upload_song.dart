@@ -24,6 +24,7 @@ class _UploadSongPageState extends State<UploadSongPage> {
   final TextEditingController _songDurationController = TextEditingController();
   final ValueNotifier<File?> _songFile = ValueNotifier(null);
   final ValueNotifier<File?> _coverImageFile = ValueNotifier(null);
+  final GlobalKey<FormState> _formKey = GlobalKey();
 
   final List<String> _artists = [];
 
@@ -32,6 +33,7 @@ class _UploadSongPageState extends State<UploadSongPage> {
     _songNameController.dispose();
     _artistController.dispose();
     _songDurationController.dispose();
+    _formKey.currentState?.dispose();
     super.dispose();
   }
 
@@ -66,98 +68,102 @@ class _UploadSongPageState extends State<UploadSongPage> {
         },
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              CommonTextField(
-                controller: _songNameController,
-                hintText: "Song name",
-              ),
-              const SizedBox(height: 20),
-              Wrap(
-                spacing: 8.0,
-                children: _artists
-                    .map((artist) => Chip(
-                          color:
-                              const WidgetStatePropertyAll(AppColors.primary),
-                          deleteIconColor: Colors.white,
-                          label: Text(
-                            artist,
-                            style: TextStyle(
-                              color: context.isDarkMode
-                                  ? Colors.white
-                                  : Colors.black,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                CommonTextFormField(
+                  controller: _songNameController,
+                  hintText: "Song name",
+                ),
+                const SizedBox(height: 20),
+                Wrap(
+                  spacing: 8.0,
+                  children: _artists
+                      .map((artist) => Chip(
+                            color:
+                                const WidgetStatePropertyAll(AppColors.primary),
+                            deleteIconColor: Colors.white,
+                            label: Text(
+                              artist,
+                              style: TextStyle(
+                                color: context.isDarkMode
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
                             ),
-                          ),
-                          onDeleted: () {
-                            setState(() {
-                              _artists.remove(artist);
-                            });
-                          },
-                        ))
-                    .toList(),
-              ),
-              const SizedBox(height: 10),
-              CommonTextField(
-                controller: _artistController,
-                hintText: "Artist",
-              ),
-              const SizedBox(height: 10),
-              _buildButton("Add Artist", Icons.add, _addArtist),
-              const SizedBox(height: 10),
-              CommonTextField(
-                controller: _songDurationController,
-                hintText: "Duration",
-              ),
-              const SizedBox(height: 20),
-              _buildButton("Pick Song (MP3)", Icons.audiotrack, () async {
-                File? songFile =
-                    await context.read<UploadSongCubit>().pickMP3File();
-                _songFile.value = songFile;
-              }),
-              ValueListenableBuilder(
-                valueListenable: _songFile,
-                builder: (context, value, child) => Visibility(
-                  visible: value != null,
-                  child: _FileNameDisplay(
-                      fileName: _songFile.value?.path.split('/').last ?? ''),
+                            onDeleted: () {
+                              setState(() {
+                                _artists.remove(artist);
+                              });
+                            },
+                          ))
+                      .toList(),
                 ),
-              ),
-              const SizedBox(height: 20),
-              _buildButton("Pick Cover Image", Icons.image, () async {
-                File? coverImageFile =
-                    await context.read<UploadSongCubit>().pickCoverImage();
-                _coverImageFile.value = coverImageFile;
-              }),
-              ValueListenableBuilder(
-                valueListenable: _coverImageFile,
-                builder: (context, value, child) => Visibility(
-                  visible: value != null,
-                  child: _FileNameDisplay(
-                      fileName:
-                          _coverImageFile.value?.path.split('/').last ?? ''),
+                const SizedBox(height: 10),
+                CommonTextFormField(
+                  controller: _artistController,
+                  hintText: "Artist",
                 ),
-              ),
-              const SizedBox(height: 20),
-              _buildButton("Upload Song", Icons.upload, () {
-                if (_songFile.value != null &&
-                    _coverImageFile.value != null &&
-                    _artists.isNotEmpty) {
-                  context.read<UploadSongCubit>().uploadSong(
-                        songName: _songNameController.text,
-                        artists: _artists,
-                        songFile: _songFile.value!,
-                        coverImage: _coverImageFile.value!,
-                        duration: _songDurationController.text,
-                      );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text(
-                            'Please select song, cover image, and at least one artist')),
-                  );
-                }
-              }),
-            ],
+                const SizedBox(height: 10),
+                _buildButton("Add Artist", Icons.add, _addArtist),
+                const SizedBox(height: 10),
+                CommonTextFormField(
+                  controller: _songDurationController,
+                  hintText: "Duration (04:24)",
+                ),
+                const SizedBox(height: 20),
+                _buildButton("Pick Song (.mp3)", Icons.audiotrack, () async {
+                  File? songFile =
+                      await context.read<UploadSongCubit>().pickMP3File();
+                  _songFile.value = songFile;
+                }),
+                ValueListenableBuilder(
+                  valueListenable: _songFile,
+                  builder: (context, value, child) => Visibility(
+                    visible: value != null,
+                    child: _FileNameDisplay(
+                        fileName: _songFile.value?.path.split('/').last ?? ''),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _buildButton("Pick Cover Image", Icons.image, () async {
+                  File? coverImageFile =
+                      await context.read<UploadSongCubit>().pickCoverImage();
+                  _coverImageFile.value = coverImageFile;
+                }),
+                ValueListenableBuilder(
+                  valueListenable: _coverImageFile,
+                  builder: (context, value, child) => Visibility(
+                    visible: value != null,
+                    child: _FileNameDisplay(
+                        fileName:
+                            _coverImageFile.value?.path.split('/').last ?? ''),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _buildButton("Upload Song", Icons.upload, () {
+                  if (!_formKey.currentState!.validate()) return;
+                  if (_songFile.value != null &&
+                      _coverImageFile.value != null &&
+                      _artists.isNotEmpty) {
+                    context.read<UploadSongCubit>().uploadSong(
+                          songName: _songNameController.text,
+                          artists: _artists,
+                          songFile: _songFile.value!,
+                          coverImage: _coverImageFile.value!,
+                          duration: _songDurationController.text,
+                        );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text(
+                              'Please select song, cover image, and at least one artist')),
+                    );
+                  }
+                }),
+              ],
+            ),
           ),
         ),
       ),

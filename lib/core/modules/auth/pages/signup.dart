@@ -25,6 +25,7 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final ValueNotifier<bool> isObscure = ValueNotifier(true);
+  final GlobalKey<FormState> _formKey = GlobalKey();
 
   @override
   void initState() {
@@ -36,6 +37,7 @@ class _SignupPageState extends State<SignupPage> {
     _email.dispose();
     _password.dispose();
     _fullName.dispose();
+    _formKey.currentState?.dispose();
     super.dispose();
   }
 
@@ -64,48 +66,53 @@ class _SignupPageState extends State<SignupPage> {
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                'Register',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-              CommonTextField(
-                controller: _fullName,
-                hintText: 'Full name',
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              CommonTextField(
-                controller: _email,
-                hintText: 'Email',
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              CommonTextField(
-                controller: _password,
-                hintText: 'Password',
-                isPassword: true,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              BasicAppButton(
-                  onPressed: () async {
-                    context.read<SignUpCubit>().createAccount(
-                        email: _email.text,
-                        password: _password.text,
-                        name: _fullName.text);
-                  },
-                  title: 'Create Account')
-            ],
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  'Register',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+                CommonTextFormField(
+                  controller: _fullName,
+                  hintText: 'Full name',
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                CommonTextFormField(
+                  isEmail: true,
+                  controller: _email,
+                  hintText: 'Email',
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                CommonTextFormField(
+                  controller: _password,
+                  hintText: 'Password',
+                  isPassword: true,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                BasicAppButton(
+                    onPressed: () async {
+                      if (!_formKey.currentState!.validate()) return;
+                      context.read<SignUpCubit>().createAccount(
+                          email: _email.text,
+                          password: _password.text,
+                          name: _fullName.text);
+                    },
+                    title: 'Create Account')
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: Padding(
