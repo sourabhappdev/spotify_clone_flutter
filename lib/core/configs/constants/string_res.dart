@@ -9,5 +9,6 @@ class StringRes {
 
   static const String userId = "userId",
       sessionId = "sessionId",
-      likedSongs = "liked_songs";
+      likedSongs = "liked_songs",
+      somethingWrong = "Oops! Something went wrong. Please try again.";
 }

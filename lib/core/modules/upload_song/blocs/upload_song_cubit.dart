@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:appwrite/appwrite.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:spotify_clone/common/services/appwrite_service.dart';
+import 'package:spotify_clone/core/configs/constants/string_res.dart';
 import 'package:spotify_clone/core/modules/upload_song/blocs/upload_song_state.dart';
 
 class UploadSongCubit extends Cubit<UploadSongState> {
@@ -54,10 +56,11 @@ class UploadSongCubit extends Cubit<UploadSongState> {
   }) async {
     try {
       emit(UploadSongLoading());
+      final bytes = await songFile.readAsBytes();
       final songFileResult = await AppWriteService.storage.createFile(
           bucketId: dotenv.env['SONGS_BUCKET'] ?? '',
           fileId: ID.unique(),
-          file: InputFile.fromPath(path: songFile.path));
+          file: InputFile.fromBytes(bytes: bytes, filename: songName));
       final songFileUrl =
           'https://cloud.appwrite.io/v1/storage/buckets/${dotenv.env['SONGS_BUCKET']}/files/${songFileResult.$id}/view?project=${dotenv.env['PROJECT']}';
 
@@ -83,7 +86,10 @@ class UploadSongCubit extends Cubit<UploadSongState> {
 
       emit(const UploadSongSuccess('Song uploaded successfully!'));
     } catch (e) {
-      emit(UploadSongFailure('Failed to upload song: ${e.toString()}'));
+      debugPrint(e.toString());
+      kDebugMode
+          ? emit(UploadSongFailure('Failed to upload song: ${e.toString()}'))
+          : emit(const UploadSongFailure(StringRes.somethingWrong));
     }
   }
 }

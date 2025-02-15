@@ -22,8 +22,8 @@ class _UploadSongPageState extends State<UploadSongPage> {
   final TextEditingController _songNameController = TextEditingController();
   final TextEditingController _artistController = TextEditingController();
   final TextEditingController _songDurationController = TextEditingController();
-  File? _songFile;
-  File? _coverImageFile;
+  final ValueNotifier<File?> _songFile = ValueNotifier(null);
+  final ValueNotifier<File?> _coverImageFile = ValueNotifier(null);
 
   final List<String> _artists = [];
 
@@ -35,12 +35,11 @@ class _UploadSongPageState extends State<UploadSongPage> {
     super.dispose();
   }
 
-  // Method to add artist to the list
   void _addArtist() {
     if (_artistController.text.isNotEmpty) {
       setState(() {
         _artists.add(_artistController.text);
-        _artistController.clear(); // Clear the artist text field
+        _artistController.clear();
       });
     }
   }
@@ -103,178 +102,118 @@ class _UploadSongPageState extends State<UploadSongPage> {
                 hintText: "Artist",
               ),
               const SizedBox(height: 10),
-              GestureDetector(
-                onTap: _addArtist,
-                child: Container(
-                  width: 200,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.add,
-                        color: context.isDarkMode
-                            ? Colors.white
-                            : const Color(0xff2C2B2B),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Add Artist',
-                        style: TextStyle(
-                          color: context.isDarkMode
-                              ? Colors.white
-                              : const Color(0xff2C2B2B),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              _buildButton("Add Artist", Icons.add, _addArtist),
               const SizedBox(height: 10),
               CommonTextField(
                 controller: _songDurationController,
                 hintText: "Duration",
               ),
               const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () async {
-                  File? songFile =
-                      await context.read<UploadSongCubit>().pickMP3File();
-                  _songFile = songFile;
-                },
-                child: Container(
-                  width: 200,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.audiotrack,
-                        color: context.isDarkMode
-                            ? Colors.white
-                            : const Color(0xff2C2B2B),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Pick Song (MP3)',
-                        style: TextStyle(
-                          color: context.isDarkMode
-                              ? Colors.white
-                              : const Color(0xff2C2B2B),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+              _buildButton("Pick Song (MP3)", Icons.audiotrack, () async {
+                File? songFile =
+                    await context.read<UploadSongCubit>().pickMP3File();
+                _songFile.value = songFile;
+              }),
+              ValueListenableBuilder(
+                valueListenable: _songFile,
+                builder: (context, value, child) => Visibility(
+                  visible: value != null,
+                  child: _FileNameDisplay(
+                      fileName: _songFile.value?.path.split('/').last ?? ''),
                 ),
               ),
               const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () async {
-                  File? coverImageFile =
-                      await context.read<UploadSongCubit>().pickCoverImage();
-                  _coverImageFile = coverImageFile;
-                },
-                child: Container(
-                  width: 200,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.image,
-                        color: context.isDarkMode
-                            ? Colors.white
-                            : const Color(0xff2C2B2B),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Pick Cover Image',
-                        style: TextStyle(
-                          color: context.isDarkMode
-                              ? Colors.white
-                              : const Color(0xff2C2B2B),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+              _buildButton("Pick Cover Image", Icons.image, () async {
+                File? coverImageFile =
+                    await context.read<UploadSongCubit>().pickCoverImage();
+                _coverImageFile.value = coverImageFile;
+              }),
+              ValueListenableBuilder(
+                valueListenable: _coverImageFile,
+                builder: (context, value, child) => Visibility(
+                  visible: value != null,
+                  child: _FileNameDisplay(
+                      fileName:
+                          _coverImageFile.value?.path.split('/').last ?? ''),
                 ),
               ),
               const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () {
-                  if (_songFile != null &&
-                      _coverImageFile != null &&
-                      _artists.isNotEmpty) {
-                    context.read<UploadSongCubit>().uploadSong(
-                          songName: _songNameController.text,
-                          artists: _artists,
-                          songFile: _songFile!,
-                          coverImage: _coverImageFile!,
-                          duration: _songDurationController
-                              .text, // Placeholder duration
-                        );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text(
-                              'Please select song, cover image, and at least one artist')),
-                    );
-                  }
-                },
-                child: Container(
-                  width: 200,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.upload,
-                        color: context.isDarkMode
-                            ? Colors.white
-                            : const Color(0xff2C2B2B),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Upload Song',
-                        style: TextStyle(
-                          color: context.isDarkMode
-                              ? Colors.white
-                              : const Color(0xff2C2B2B),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              _buildButton("Upload Song", Icons.upload, () {
+                if (_songFile.value != null &&
+                    _coverImageFile.value != null &&
+                    _artists.isNotEmpty) {
+                  context.read<UploadSongCubit>().uploadSong(
+                        songName: _songNameController.text,
+                        artists: _artists,
+                        songFile: _songFile.value!,
+                        coverImage: _coverImageFile.value!,
+                        duration: _songDurationController.text,
+                      );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text(
+                            'Please select song, cover image, and at least one artist')),
+                  );
+                }
+              }),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildButton(String text, IconData icon, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        decoration: BoxDecoration(
+          color: AppColors.primary,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color:
+                  context.isDarkMode ? Colors.white : const Color(0xff2C2B2B),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              text,
+              style: TextStyle(
+                color:
+                    context.isDarkMode ? Colors.white : const Color(0xff2C2B2B),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FileNameDisplay extends StatelessWidget {
+  final String fileName;
+
+  const _FileNameDisplay({required this.fileName});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Text(
+        "Selected: $fileName",
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: context.isDarkMode ? Colors.white : Colors.black,
         ),
       ),
     );
