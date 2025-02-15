@@ -472,7 +472,7 @@ extension _HelperMehtod on _ProfilePageState {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: context.isDarkMode
-                ? AppColors.darkBackground
+                ? const Color(0xff2C2B2B)
                 : AppColors.lightBackground,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
           ),
@@ -483,7 +483,7 @@ extension _HelperMehtod on _ProfilePageState {
                 decoration: BoxDecoration(
                   color: context.isDarkMode
                       ? AppColors.primary
-                      : AppColors.primary.withOpacity(0.1),
+                      : AppColors.primary.withAlpha(26),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
@@ -511,7 +511,7 @@ extension _HelperMehtod on _ProfilePageState {
                 decoration: BoxDecoration(
                   color: context.isDarkMode
                       ? AppColors.primary
-                      : AppColors.primary.withOpacity(0.1),
+                      : AppColors.primary.withAlpha(26),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
