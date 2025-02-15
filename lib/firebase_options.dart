@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAAdGoSz9RzBt1rN_rwFU_acUHkz_dYJXk',
-    appId: '1:323330246165:android:6384b42fd1fb930f3bb01c',
+    appId: '1:323330246165:android:0e9bcb97ae90e80d3bb01c',
     messagingSenderId: '323330246165',
     projectId: 'spotify-clone-d17cf',
     storageBucket: 'spotify-clone-d17cf.firebasestorage.app',
@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'spotify-clone-d17cf.firebasestorage.app',
     iosBundleId: 'com.example.spotifyClone',
   );
+
 }

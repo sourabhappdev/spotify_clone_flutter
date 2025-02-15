@@ -7,9 +7,28 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:323330246165:android:6384b42fd1fb930f3bb01c",
+        "mobilesdk_app_id": "1:323330246165:android:0e9bcb97ae90e80d3bb01c",
         "android_client_info": {
-          "package_name": "com.sourabh.spotify.clone.app.dev"
+          "package_name": "com.spotify.clone.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAdGoSz9RzBt1rN_rwFU_acUHkz_dYJXk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:323330246165:android:0e9bcb97ae90e80d3bb01c",
+        "android_client_info": {
+          "package_name": "com.spotify.clone.app.dev"
         }
       },
       "oauth_client": [],
