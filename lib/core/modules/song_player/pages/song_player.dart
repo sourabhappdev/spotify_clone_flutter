@@ -149,210 +149,206 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
             ],
           ),
           body: SingleChildScrollView(
-            physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-            child: Builder(builder: (context) {
-              return Column(
-                children: [
-                  ValueListenableBuilder(
-                    valueListenable: AppState.instance.currentPlayingSongIndex,
-                    builder: (context, value, child) => SizedBox(
-                      height: MediaQuery.of(context).size.height / 2.5,
-                      width: double.infinity,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(30),
-                        child: CachedNetworkImage(
-                          imageUrl: widget.songEntityList[value].coverImage,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              const Center(child: SpotifyLoader()),
-                          errorWidget: (context, url, error) =>
-                              const Center(child: Icon(Icons.error)),
-                        ),
+            child: Column(
+              children: [
+                ValueListenableBuilder(
+                  valueListenable: AppState.instance.currentPlayingSongIndex,
+                  builder: (context, value, child) => SizedBox(
+                    height: MediaQuery.of(context).size.height / 2.5,
+                    width: double.infinity,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(30),
+                      child: CachedNetworkImage(
+                        imageUrl: widget.songEntityList[value].coverImage,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            const Center(child: SpotifyLoader()),
+                        errorWidget: (context, url, error) =>
+                            const Center(child: Icon(Icons.error)),
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ValueListenableBuilder(
+                  valueListenable: AppState.instance.currentPlayingSongIndex,
+                  builder: (context, value, child) => Text(
+                    widget.songEntityList[value].name,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 22),
                   ),
-                  ValueListenableBuilder(
-                    valueListenable: AppState.instance.currentPlayingSongIndex,
-                    builder: (context, value, child) => Text(
-                      widget.songEntityList[value].name,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 22),
-                    ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                ValueListenableBuilder(
+                  valueListenable: AppState.instance.currentPlayingSongIndex,
+                  builder: (context, value, child) => Text(
+                    widget.songEntityList[value].artists.first,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w400, fontSize: 14),
                   ),
-                  const SizedBox(
-                    height: 5,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                ValueListenableBuilder(
+                  valueListenable: isLikedSong,
+                  builder: (context, isLikedVal, child) => Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          isLikedVal
+                              ? context
+                                  .read<FavoriteSongsCubit>()
+                                  .removeSongFromFavorites(
+                                      userId: AppState.instance.userId,
+                                      songId: widget
+                                          .songEntityList[AppState.instance
+                                              .currentPlayingSongIndex.value]
+                                          .id)
+                              : context
+                                  .read<FavoriteSongsCubit>()
+                                  .addSongToFavorites(
+                                      userId: AppState.instance.userId,
+                                      songId: widget
+                                          .songEntityList[AppState.instance
+                                              .currentPlayingSongIndex.value]
+                                          .id);
+                        },
+                        child: Icon(isLikedVal
+                            ? Icons.thumb_up_alt
+                            : Icons.thumb_up_alt_outlined),
+                      ),
+                    ],
                   ),
-                  ValueListenableBuilder(
-                    valueListenable: AppState.instance.currentPlayingSongIndex,
-                    builder: (context, value, child) => Text(
-                      widget.songEntityList[value].artists.first,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w400, fontSize: 14),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  ValueListenableBuilder(
-                    valueListenable: isLikedSong,
-                    builder: (context, isLikedVal, child) => Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            isLikedVal
-                                ? context
-                                    .read<FavoriteSongsCubit>()
-                                    .removeSongFromFavorites(
-                                        userId: AppState.instance.userId,
-                                        songId: widget
-                                            .songEntityList[AppState.instance
-                                                .currentPlayingSongIndex.value]
-                                            .id)
-                                : context
-                                    .read<FavoriteSongsCubit>()
-                                    .addSongToFavorites(
-                                        userId: AppState.instance.userId,
-                                        songId: widget
-                                            .songEntityList[AppState.instance
-                                                .currentPlayingSongIndex.value]
-                                            .id);
-                          },
-                          child: Icon(isLikedVal
-                              ? Icons.thumb_up_alt
-                              : Icons.thumb_up_alt_outlined),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  BlocBuilder<SongPlayerCubit, SongPlayerState>(
-                    builder: (context, state) {
-                      if (state is SongPlayerLoading) {
-                        return const CircularProgressIndicator();
-                      }
-                      if (state is SongPlayerLoaded) {
-                        return ValueListenableBuilder(
-                          valueListenable:
-                              context.read<SongPlayerCubit>().songPosition,
-                          builder: (context, songPosition, child) => Column(
-                            children: [
-                              Slider(
-                                  activeColor: AppColors.primary,
-                                  inactiveColor: AppColors.grey,
-                                  thumbColor: AppColors.primary,
-                                  value: songPosition.inSeconds.toDouble(),
-                                  min: 0.0,
-                                  max: context
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                BlocBuilder<SongPlayerCubit, SongPlayerState>(
+                  builder: (context, state) {
+                    if (state is SongPlayerLoading) {
+                      return const CircularProgressIndicator();
+                    }
+                    if (state is SongPlayerLoaded) {
+                      return ValueListenableBuilder(
+                        valueListenable:
+                            context.read<SongPlayerCubit>().songPosition,
+                        builder: (context, songPosition, child) => Column(
+                          children: [
+                            Slider(
+                                activeColor: AppColors.primary,
+                                inactiveColor: AppColors.grey,
+                                thumbColor: AppColors.primary,
+                                value: songPosition.inSeconds.toDouble(),
+                                min: 0.0,
+                                max: context
+                                    .read<SongPlayerCubit>()
+                                    .songDuration
+                                    .inSeconds
+                                    .toDouble(),
+                                onChanged: (value) {
+                                  int seekPosition = value.toInt();
+                                  context
                                       .read<SongPlayerCubit>()
-                                      .songDuration
-                                      .inSeconds
-                                      .toDouble(),
-                                  onChanged: (value) {
-                                    int seekPosition = value.toInt();
+                                      .seekTo(seekPosition);
+                                }),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(formatDuration(songPosition)),
+                                Text(formatDuration(context
+                                    .read<SongPlayerCubit>()
+                                    .songDuration))
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
                                     context
                                         .read<SongPlayerCubit>()
-                                        .seekTo(seekPosition);
-                                  }),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(formatDuration(songPosition)),
-                                  Text(formatDuration(context
-                                      .read<SongPlayerCubit>()
-                                      .songDuration))
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      context
-                                          .read<SongPlayerCubit>()
-                                          .previousSong();
-                                    },
-                                    child: const SizedBox(
-                                      height: 60,
-                                      width: 60,
+                                        .previousSong();
+                                  },
+                                  child: const SizedBox(
+                                    height: 60,
+                                    width: 60,
+                                    child: Icon(
+                                      Icons.arrow_left,
+                                      size: 60,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 50),
+                                GestureDetector(
+                                  onTap: () {
+                                    context
+                                        .read<SongPlayerCubit>()
+                                        .playOrPauseSong();
+                                  },
+                                  child: SizedBox(
+                                    height: 60,
+                                    width: 60,
+                                    child: DecoratedBox(
+                                      decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: AppColors.primary),
                                       child: Icon(
-                                        Icons.arrow_left,
-                                        size: 60,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 50),
-                                  GestureDetector(
-                                    onTap: () {
-                                      context
-                                          .read<SongPlayerCubit>()
-                                          .playOrPauseSong();
-                                    },
-                                    child: SizedBox(
-                                      height: 60,
-                                      width: 60,
-                                      child: DecoratedBox(
-                                        decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: AppColors.primary),
-                                        child: Icon(
-                                          context
-                                                  .read<SongPlayerCubit>()
-                                                  .audioPlayer
-                                                  .playing
-                                              ? Icons.pause
-                                              : Icons.play_arrow,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 50),
-                                  GestureDetector(
-                                    onTap: () {
-                                      if (AppState.instance
-                                              .currentPlayingSongIndex.value !=
-                                          widget.songEntityList.length - 1) {
                                         context
-                                            .read<SongPlayerCubit>()
-                                            .nextSong();
-                                      }
-                                    },
-                                    child: const SizedBox(
-                                      height: 60,
-                                      width: 60,
-                                      child: Icon(
-                                        Icons.arrow_right,
-                                        size: 60,
+                                                .read<SongPlayerCubit>()
+                                                .audioPlayer
+                                                .playing
+                                            ? Icons.pause
+                                            : Icons.play_arrow,
                                       ),
                                     ),
                                   ),
-                                ],
-                              )
-                            ],
-                          ),
-                        );
-                      }
+                                ),
+                                const SizedBox(width: 50),
+                                GestureDetector(
+                                  onTap: () {
+                                    if (AppState.instance
+                                            .currentPlayingSongIndex.value !=
+                                        widget.songEntityList.length - 1) {
+                                      context
+                                          .read<SongPlayerCubit>()
+                                          .nextSong();
+                                    }
+                                  },
+                                  child: const SizedBox(
+                                    height: 60,
+                                    width: 60,
+                                    child: Icon(
+                                      Icons.arrow_right,
+                                      size: 60,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      );
+                    }
 
-                      return const SizedBox.shrink();
-                    },
-                  )
-                ],
-              );
-            }),
+                    return const SizedBox.shrink();
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),

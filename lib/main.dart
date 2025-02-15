@@ -4,6 +4,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -28,6 +29,11 @@ void mainDelegate() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
     await dotenv.load(fileName: ".env");
     AppWriteService.instance.init();
     HydratedBloc.storage = await HydratedStorage.build(
