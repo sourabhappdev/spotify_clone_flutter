@@ -83,75 +83,87 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
           }
         },
         child: Scaffold(
-          appBar: BasicAppbar(
-            title: const Text(
-              'Now playing',
-              style: TextStyle(fontSize: 18),
-            ),
-            actions: [
-              ValueListenableBuilder(
-                valueListenable: isLikedSong,
-                builder: (context, isLikedVal, child) => IconButton(
-                  onPressed: () {
-                    showMenu(
-                      color: context.isDarkMode
-                          ? AppColors.darkBackground
-                          : AppColors.lightBackground,
-                      context: context,
-                      position: const RelativeRect.fromLTRB(100, 80, 0, 0),
-                      items: [
-                        PopupMenuItem(
-                          value: 'like',
-                          onTap: () {
-                            isLikedVal
-                                ? context
-                                    .read<FavoriteSongsCubit>()
-                                    .removeSongFromFavorites(
-                                        userId: AppState.instance.userId,
-                                        songId: widget
-                                            .songEntityList[AppState.instance
-                                                .currentPlayingSongIndex.value]
-                                            .id)
-                                : context
-                                    .read<FavoriteSongsCubit>()
-                                    .addSongToFavorites(
-                                        userId: AppState.instance.userId,
-                                        songId: widget
-                                            .songEntityList[AppState.instance
-                                                .currentPlayingSongIndex.value]
-                                            .id);
-                          },
-                          child: ListTile(
-                            leading: Icon(isLikedVal
-                                ? Icons.thumb_up_alt
-                                : Icons.thumb_up_alt_outlined),
-                            title: Text(isLikedVal
-                                ? 'Remove from liked songs'
-                                : 'Add to liked songs'),
-                          ),
-                        ),
-                        PopupMenuItem(
-                          value: 'exit',
-                          onTap: () {
-                            context.pop();
-                          },
-                          child: const ListTile(
-                            leading: Icon(Icons.exit_to_app),
-                            title: Text('Exit'),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                  icon: const Icon(Icons.more_vert_rounded),
-                ),
-              ),
-            ],
+          appBar: AppBar(
+            backgroundColor: Colors.black45,
+            toolbarHeight: 0,
           ),
           body: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
             child: Column(
               children: [
+                BasicAppbar(
+                  title: const Text(
+                    'Now playing',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  actions: [
+                    ValueListenableBuilder(
+                      valueListenable: isLikedSong,
+                      builder: (context, isLikedVal, child) => IconButton(
+                        onPressed: () {
+                          showMenu(
+                            color: context.isDarkMode
+                                ? AppColors.darkBackground
+                                : AppColors.lightBackground,
+                            context: context,
+                            position:
+                                const RelativeRect.fromLTRB(100, 80, 0, 0),
+                            items: [
+                              PopupMenuItem(
+                                value: 'like',
+                                onTap: () {
+                                  isLikedVal
+                                      ? context
+                                          .read<FavoriteSongsCubit>()
+                                          .removeSongFromFavorites(
+                                              userId: AppState.instance.userId,
+                                              songId: widget
+                                                  .songEntityList[AppState
+                                                      .instance
+                                                      .currentPlayingSongIndex
+                                                      .value]
+                                                  .id)
+                                      : context
+                                          .read<FavoriteSongsCubit>()
+                                          .addSongToFavorites(
+                                              userId: AppState.instance.userId,
+                                              songId: widget
+                                                  .songEntityList[AppState
+                                                      .instance
+                                                      .currentPlayingSongIndex
+                                                      .value]
+                                                  .id);
+                                },
+                                child: ListTile(
+                                  leading: Icon(isLikedVal
+                                      ? Icons.thumb_up_alt
+                                      : Icons.thumb_up_alt_outlined),
+                                  title: Text(isLikedVal
+                                      ? 'Remove from liked songs'
+                                      : 'Add to liked songs'),
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 'exit',
+                                onTap: () {
+                                  context.pop();
+                                },
+                                child: const ListTile(
+                                  leading: Icon(Icons.exit_to_app),
+                                  title: Text('Exit'),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        icon: const Icon(Icons.more_vert_rounded),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
                 ValueListenableBuilder(
                   valueListenable: AppState.instance.currentPlayingSongIndex,
                   builder: (context, value, child) => SizedBox(

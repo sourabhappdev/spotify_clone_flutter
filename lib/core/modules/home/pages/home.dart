@@ -35,6 +35,7 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BasicAppbar(
+        backgroundColor: AppColors.primary,
         hideBack: true,
         actions: [
           IconButton(
@@ -42,19 +43,28 @@ class _HomePageState extends State<HomePage>
               await context.pushNamed(AppRoutes.uploadSongs);
               if (context.mounted) context.read<NewSongsCubit>().getNewsSongs();
             },
-            icon: const Icon(Icons.upload),
+            icon: Icon(
+              Icons.upload,
+              color:
+                  context.isDarkMode ? Colors.white : const Color(0xff2C2B2B),
+            ),
           ),
           IconButton(
             onPressed: () {
               context.pushNamed(AppRoutes.profilePage);
             },
-            icon: const Icon(Icons.person),
+            icon: Icon(
+              Icons.person,
+              color:
+                  context.isDarkMode ? Colors.white : const Color(0xff2C2B2B),
+            ),
           ),
         ],
         title: SvgPicture.asset(
           AppVectors.logo,
           height: 40,
           width: 40,
+          color: Colors.white,
         ),
       ),
       body: SingleChildScrollView(
