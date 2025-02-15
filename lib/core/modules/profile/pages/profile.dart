@@ -83,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
             listener: (context, state) {
               if (state is LogOutSuccess) {
                 CustomLoader.hideLoader(context);
-                context.pushNamedAndRemoveUntil(AppRoutes.signInPage);
+                context.pushNamedAndRemoveUntil(AppRoutes.getStartedPage);
               } else if (state is LogOutFailure) {
                 CustomLoader.hideLoader(context);
                 ToastUtils.showFailed(message: state.error);
