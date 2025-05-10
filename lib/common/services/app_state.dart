@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:spotify_clone/common/services/firebase_services.dart';
 import 'package:spotify_clone/core/configs/constants/string_res.dart';
 
 import '../../core/configs/manager/storage_manager.dart';
@@ -40,6 +41,7 @@ class AppState {
 
   // Initialize values
   Future<void> setInitialValues() async {
+    await FirebaseServices().getFCMToken();
     _sessionId =
         await StorageManager.instance.getData(StringRes.sessionId) ?? '';
     _userId = await StorageManager.instance.getData(StringRes.userId) ?? '';
@@ -52,5 +54,6 @@ class AppState {
     _userId = '';
     _sessionId = '';
     await StorageManager.instance.clearData();
+    await FirebaseServices().updateToken();
   }
 }

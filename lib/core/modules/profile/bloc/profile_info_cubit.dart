@@ -22,7 +22,6 @@ class ProfileInfoCubit extends Cubit<ProfileInfoState> {
       );
       final ProfileInfoModel profileInfoModel =
           ProfileInfoModel.fromMap(userDoc.data);
-
       emit(ProfileInfoSuccess(
         profileInfoModel: profileInfoModel,
       ));

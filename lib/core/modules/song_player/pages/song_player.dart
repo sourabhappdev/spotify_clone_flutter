@@ -135,12 +135,16 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
                                                   .id);
                                 },
                                 child: ListTile(
-                                  leading: Icon(isLikedVal
-                                      ? Icons.thumb_up_alt
-                                      : Icons.thumb_up_alt_outlined),
-                                  title: Text(isLikedVal
-                                      ? 'Remove from liked songs'
-                                      : 'Add to liked songs'),
+                                  leading: Icon(
+                                    isLikedVal
+                                        ? Icons.favorite
+                                        : Icons.favorite_border_outlined,
+                                    color:
+                                        isLikedVal ? Colors.pink : Colors.black,
+                                  ),
+                                  title: Text(
+                                    isLikedVal ? 'Remove Fav' : 'Add Fav',
+                                  ),
                                 ),
                               ),
                               PopupMenuItem(
@@ -233,9 +237,12 @@ class _SongPlayerPageState extends State<SongPlayerPage> {
                                               .currentPlayingSongIndex.value]
                                           .id);
                         },
-                        child: Icon(isLikedVal
-                            ? Icons.thumb_up_alt
-                            : Icons.thumb_up_alt_outlined),
+                        child: Icon(
+                          isLikedVal
+                              ? Icons.favorite
+                              : Icons.favorite_border_outlined,
+                          color: isLikedVal ? Colors.pink : Colors.black,
+                        ),
                       ),
                     ],
                   ),

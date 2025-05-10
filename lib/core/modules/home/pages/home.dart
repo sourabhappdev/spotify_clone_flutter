@@ -34,21 +34,71 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        backgroundColor: context.isDarkMode ? Colors.black : Colors.white,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: AppColors.primary,
+              ),
+              child: SvgPicture.asset(
+                AppVectors.logo,
+                height: 40,
+                width: 40,
+                colorFilter:
+                    const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+              ),
+            ),
+            _buildDrawerItem(
+              icon: Icons.people,
+              label: 'My Friends',
+              onTap: () => context.pushNamed(AppRoutes.myFriends),
+              context: context,
+            ),
+            _buildDrawerItem(
+              icon: Icons.add_reaction_rounded,
+              label: 'Add Friends',
+              onTap: () => context.pushNamed(AppRoutes.addFriends),
+              context: context,
+            ),
+            _buildDrawerItem(
+              icon: Icons.alternate_email,
+              label: 'Friend Requests',
+              onTap: () => context.pushNamed(AppRoutes.friendRequest),
+              context: context,
+            ),
+            _buildDrawerItem(
+              icon: Icons.upload,
+              label: 'Upload Songs',
+              onTap: () async {
+                await context.pushNamed(AppRoutes.uploadSongs);
+                if (context.mounted) {
+                  context.read<NewSongsCubit>().getNewsSongs();
+                }
+              },
+              context: context,
+            ),
+            _buildDrawerItem(
+              icon: Icons.person,
+              label: 'Profile',
+              onTap: () => context.pushNamed(AppRoutes.profilePage),
+              context: context,
+            ),
+          ],
+        ),
+      ),
       appBar: BasicAppbar(
         backgroundColor: AppColors.primary,
         hideBack: true,
+        title: SvgPicture.asset(
+          AppVectors.logo,
+          height: 40,
+          width: 40,
+          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+        ),
         actions: [
-          IconButton(
-            onPressed: () async {
-              await context.pushNamed(AppRoutes.uploadSongs);
-              if (context.mounted) context.read<NewSongsCubit>().getNewsSongs();
-            },
-            icon: Icon(
-              Icons.upload,
-              color:
-                  context.isDarkMode ? Colors.white : const Color(0xff2C2B2B),
-            ),
-          ),
           IconButton(
             onPressed: () {
               context.pushNamed(AppRoutes.profilePage);
@@ -60,12 +110,6 @@ class _HomePageState extends State<HomePage>
             ),
           ),
         ],
-        title: SvgPicture.asset(
-          AppVectors.logo,
-          height: 40,
-          width: 40,
-          color: Colors.white,
-        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -126,10 +170,32 @@ class _HomePageState extends State<HomePage>
                 ],
               ),
             ),
-            // const PlayList()
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    required BuildContext context,
+  }) {
+    return ListTile(
+      leading:
+          Icon(icon, color: context.isDarkMode ? Colors.white : Colors.black),
+      title: Text(
+        label,
+        style: TextStyle(
+          color: context.isDarkMode ? Colors.white : Colors.black,
+          fontSize: 16,
+        ),
+      ),
+      onTap: () {
+        Navigator.pop(context);
+        onTap();
+      },
     );
   }
 }

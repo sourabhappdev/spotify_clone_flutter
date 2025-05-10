@@ -326,130 +326,331 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(
                     height: 30,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Favorite songs',
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        if (state.profileInfoModel.likedSong.isEmpty)
-                          const Center(
-                            child: Text(
-                              'No liked songs',
-                            ),
-                          ),
-                        ListView.separated(
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  context.pushNamed(
-                                    AppRoutes.songPlayerPage,
-                                    args: {
-                                      'songEntity':
-                                          state.profileInfoModel.likedSong,
-                                      'index': index,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Favorite songs'),
+                          const SizedBox(height: 20),
+                          if (state.profileInfoModel.likedSong.isEmpty)
+                            const Center(child: Text('No liked songs')),
+                          if (state.profileInfoModel.likedSong.isNotEmpty)
+                            Expanded(
+                              child: ListView.separated(
+                                padding: const EdgeInsets.only(bottom: 16),
+                                physics: const BouncingScrollPhysics(),
+                                itemCount:
+                                    state.profileInfoModel.likedSong.length,
+                                itemBuilder: (context, index) {
+                                  final song =
+                                      state.profileInfoModel.likedSong[index];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      AppState.instance.currentPlayingSongIndex
+                                          .value = index;
+                                      context.pushNamed(
+                                        AppRoutes.songPlayerPage,
+                                        args: {
+                                          'songEntity':
+                                              state.profileInfoModel.likedSong,
+                                          'index': index,
+                                        },
+                                      );
                                     },
-                                  );
-                                },
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        SizedBox(
-                                          height: 70,
-                                          width: 70,
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: CachedNetworkImage(
-                                              imageUrl: state.profileInfoModel
-                                                  .likedSong[index].coverImage,
-                                              fit: BoxFit.cover,
-                                              placeholder: (context, url) =>
-                                                  const CircularProgressIndicator(),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      const Icon(Icons.error),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                        Row(
                                           children: [
-                                            Text(
-                                              state.profileInfoModel
-                                                  .likedSong[index].name,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16),
+                                            SizedBox(
+                                              height: 70,
+                                              width: 70,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: song.coverImage,
+                                                  fit: BoxFit.cover,
+                                                  placeholder: (context, url) =>
+                                                      const CircularProgressIndicator(),
+                                                  errorWidget: (context, url,
+                                                          error) =>
+                                                      const Icon(Icons.error),
+                                                ),
+                                              ),
                                             ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              state
-                                                  .profileInfoModel
-                                                  .likedSong[index]
-                                                  .artists
-                                                  .first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 11),
-                                            ),
-                                            Text(state.profileInfoModel
-                                                .likedSong[index].duration
-                                                .toString()
-                                                .replaceAll('.', ':')),
-                                            const SizedBox(
-                                              width: 20,
+                                            const SizedBox(width: 10),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  song.name,
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16),
+                                                ),
+                                                const SizedBox(height: 5),
+                                                Text(
+                                                  song.artists.first,
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 11),
+                                                ),
+                                                Text(
+                                                  song.duration
+                                                      .toString()
+                                                      .replaceAll('.', ':'),
+                                                ),
+                                              ],
                                             ),
                                           ],
-                                        )
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            context
+                                                .read<FavoriteSongsCubit>()
+                                                .removeSongFromFavorites(
+                                                  songId: song.id,
+                                                  userId:
+                                                      AppState.instance.userId,
+                                                );
+                                          },
+                                          icon: const Icon(Icons.favorite,
+                                              color: Colors.pink),
+                                        ),
                                       ],
                                     ),
-                                    IconButton(
-                                      onPressed: () {
-                                        context
-                                            .read<FavoriteSongsCubit>()
-                                            .removeSongFromFavorites(
-                                                songId: state.profileInfoModel
-                                                    .likedSong[index].id,
-                                                userId:
-                                                    AppState.instance.userId);
-                                      },
-                                      icon: const Icon(
-                                        Icons.favorite,
-                                        color: Colors.pink,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              );
-                            },
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                            itemCount: state.profileInfoModel.likedSong.length)
-                      ],
+                                  );
+                                },
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: 20),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   )
                 ],
               );
             } else if (state is ProfileInfoFailure) {
-              return const Center(child: Text('Please try again'));
+              return Column(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 2.8,
+                    width: double.infinity,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                          color: context.isDarkMode
+                              ? const Color(0xff2C2B2B)
+                              : Colors.white,
+                          borderRadius: const BorderRadius.only(
+                              bottomRight: Radius.circular(50),
+                              bottomLeft: Radius.circular(50))),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ValueListenableBuilder(
+                            valueListenable: isImageSelected,
+                            builder: (context, value, child) => value
+                                ? Column(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          _showImagePickerOptions(context);
+                                        },
+                                        child: SizedBox(
+                                          height: 90,
+                                          width: 90,
+                                          child: DecoratedBox(
+                                            decoration: const BoxDecoration(
+                                                shape: BoxShape.circle),
+                                            child: ClipOval(
+                                              child: Image.file(
+                                                File(context
+                                                    .read<SelectImageCubit>()
+                                                    .image),
+                                                fit: BoxFit.cover,
+                                                height: 90,
+                                                width: 90,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      GestureDetector(
+                                        onTap: () {
+                                          context
+                                              .read<UploadProfileImageCubit>()
+                                              .uploadImage(context
+                                                  .read<SelectImageCubit>()
+                                                  .image);
+                                        },
+                                        child: Container(
+                                          width: 150,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10, horizontal: 20),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primary,
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.upload,
+                                                color: context.isDarkMode
+                                                    ? Colors.white
+                                                    : const Color(0xff2C2B2B),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                'Upload',
+                                                style: TextStyle(
+                                                  color: context.isDarkMode
+                                                      ? Colors.white
+                                                      : const Color(0xff2C2B2B),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                : Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 90,
+                                        width: 90,
+                                        child: CachedNetworkImage(
+                                          imageUrl: '',
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  DecoratedBox(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                          placeholder: (context, url) =>
+                                              const CircularProgressIndicator(
+                                            color: AppColors.primary,
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.error),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      GestureDetector(
+                                        onTap: () {
+                                          _showImagePickerOptions(context);
+                                        },
+                                        child: Container(
+                                          width: 150,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10, horizontal: 20),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primary,
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.edit,
+                                                color: context.isDarkMode
+                                                    ? Colors.white
+                                                    : const Color(0xff2C2B2B),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                'Edit profile',
+                                                style: TextStyle(
+                                                  color: context.isDarkMode
+                                                      ? Colors.white
+                                                      : const Color(0xff2C2B2B),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              context
+                                  .read<LogOutCubit>()
+                                  .logout(AppState.instance.sessionId);
+                            },
+                            child: Container(
+                              width: 150,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.logout,
+                                    color: context.isDarkMode
+                                        ? Colors.white
+                                        : const Color(0xff2C2B2B),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Log out',
+                                    style: TextStyle(
+                                      color: context.isDarkMode
+                                          ? Colors.white
+                                          : const Color(0xff2C2B2B),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text(''),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Text(
+                            '',
+                            style: TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  const Center(child: Text('Please try again')),
+                ],
+              );
             }
             return const SpotifyLoader();
           },

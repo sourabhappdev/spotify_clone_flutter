@@ -9,6 +9,10 @@ class AppRoutes {
 
   static const String splashScreen = "/",
       upcomingPage = "upcomingPage",
+      addFriends = "addFriendsPage",
+      friendRequest = "friendRequest",
+      friendsProfile = "friendsProfile",
+      myFriends = "myFriends",
       getStartedPage = 'getStartedPage',
       signInPage = "signInPage",
       signupPage = "signupPage",

@@ -3,6 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spotify_clone/core/configs/constants/app_routes.dart';
 import 'package:spotify_clone/core/modules/auth/bloc/signin/signin_cubit.dart';
 import 'package:spotify_clone/core/modules/auth/bloc/signup/sign_up_cubit.dart';
+import 'package:spotify_clone/core/modules/friend/add_friend_screen.dart';
+import 'package:spotify_clone/core/modules/friend/bloc/friend_request/friend_request_cubit.dart';
+import 'package:spotify_clone/core/modules/friend/friend_request_page.dart';
+import 'package:spotify_clone/core/modules/friend/bloc/my_friends/my_friends_cubit.dart';
+import 'package:spotify_clone/core/modules/friend/bloc/search_friends/search_friend_cubit.dart';
+import 'package:spotify_clone/core/modules/friend/my_friends_screen.dart';
 import 'package:spotify_clone/core/modules/profile/bloc/favorite_songs_cubit.dart';
 import 'package:spotify_clone/core/modules/profile/bloc/log_out_cubit.dart';
 import 'package:spotify_clone/core/modules/profile/bloc/profile_info_cubit.dart';
@@ -15,6 +21,8 @@ import '../../modules/auth/pages/signin.dart';
 import '../../modules/auth/pages/signup.dart';
 import '../../modules/auth/pages/signup_or_siginin.dart';
 import '../../modules/choose_mode/pages/choose_mode_page.dart';
+import '../../modules/friend/bloc/add_friend/add_friend_cubit.dart';
+import '../../modules/friend/friend_profile.dart';
 import '../../modules/home/bloc/new_songs_cubit.dart';
 import '../../modules/home/pages/home.dart';
 import '../../modules/intro/pages/get_started_page.dart';
@@ -137,6 +145,57 @@ class NavigationManager {
             ),
           ],
           child: const HomePage(),
+        );
+        break;
+      case AppRoutes.addFriends:
+        routeScreen = MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) => SearchFriendCubit(),
+            ),
+            BlocProvider(
+              create: (_) => AddFriendCubit(),
+            ),
+          ],
+          child: const AddFriendsScreen(),
+        );
+        break;
+      case AppRoutes.friendRequest:
+        routeScreen = MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) => FriendRequestsCubit(),
+            ),
+            BlocProvider(
+              create: (_) => AddFriendCubit(),
+            ),
+          ],
+          child: const FriendRequestsPage(),
+        );
+        break;
+      case AppRoutes.myFriends:
+        routeScreen = MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) => MyFriendsCubit(),
+            ),
+          ],
+          child: const MyFriendsScreen(),
+        );
+        break;
+      case AppRoutes.friendsProfile:
+        routeScreen = MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) => MyFriendsCubit(),
+            ),
+            BlocProvider(
+              create: (_) => FavoriteSongsCubit(),
+            ),
+          ],
+          child: FriendsProfile(
+            profileInfoModel: args?['profileInfoModel'],
+          ),
         );
         break;
       case AppRoutes.chooseSignInSignUpPage:
