@@ -1,11 +1,14 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:spotify_clone/common/services/app_state.dart';
 import 'package:spotify_clone/common/services/appwrite_service.dart';
 import 'package:spotify_clone/core/configs/constants/string_res.dart';
 import 'package:spotify_clone/core/configs/manager/storage_manager.dart';
 import 'package:spotify_clone/core/modules/auth/bloc/signin/signin_state.dart';
+
+import '../../../../../common/services/firebase_services.dart';
 
 class SignInCubit extends Cubit<SignInState> {
   SignInCubit() : super(SignInInitial());
@@ -20,6 +23,17 @@ class SignInCubit extends Cubit<SignInState> {
           .createEmailPasswordSession(email: email, password: password);
       AppState.instance.setUserId = session.userId;
       AppState.instance.setSessionId = session.$id;
+      await AppWriteService.databases.updateDocument(
+          databaseId: dotenv.env['DB'] ?? '',
+          collectionId: dotenv.env['USERS'] ?? '',
+          documentId: session.userId,
+          permissions: [
+            Permission.write(Role.any()),
+            Permission.read(Role.any()),
+          ],
+          data: {
+            'fcm_token': FirebaseServices().fcmToken,
+          });
       await StorageManager.instance.saveData(StringRes.userId, session.userId);
       await StorageManager.instance.saveData(StringRes.sessionId, session.$id);
       emit(const SignInSuccess('Signed In'));

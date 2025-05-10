@@ -37,7 +37,7 @@ void mainDelegate() async {
     await dotenv.load(fileName: ".env");
     AppWriteService.instance.init();
     HydratedBloc.storage = await HydratedStorage.build(
-      storageDirectory: await getApplicationDocumentsDirectory(),
+      storageDirectory: HydratedStorageDirectory((await getApplicationDocumentsDirectory()).path),
     );
     await JustAudioBackground.init(
         androidNotificationChannelId: 'com.sourabh.spotify.clone.app',

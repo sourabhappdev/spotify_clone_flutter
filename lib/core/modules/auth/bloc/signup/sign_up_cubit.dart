@@ -6,6 +6,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:spotify_clone/common/services/appwrite_service.dart';
 import 'package:spotify_clone/core/configs/constants/string_res.dart';
 
+import '../../../../../common/services/app_state.dart';
+import '../../../../../common/services/firebase_services.dart';
 import '../../../../configs/manager/storage_manager.dart';
 
 part 'sign_up_state.dart';
@@ -43,7 +45,10 @@ class SignUpCubit extends Cubit<SignUpState> {
             'name': user.name,
             'email': user.email,
             'id': user.$id,
+            'fcm_token': FirebaseServices().fcmToken,
           });
+      AppState.instance.setUserId = user.$id;
+      AppState.instance.setSessionId = session.$id;
       await StorageManager.instance.saveData(StringRes.userId, user.$id);
       await StorageManager.instance.saveData(StringRes.sessionId, session.$id);
       emit(const SignUpSuccess('Account created'));
